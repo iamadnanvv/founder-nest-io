@@ -18,11 +18,17 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedShowcaseRouteImport } from './routes/_authenticated/showcase'
 import { Route as AuthenticatedResourcesRouteImport } from './routes/_authenticated/resources'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
 import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticated/members'
 import { Route as AuthenticatedMarketplaceRouteImport } from './routes/_authenticated/marketplace'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
+import { Route as AuthenticatedDiscussionsRouteImport } from './routes/_authenticated/discussions'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedMessagesUserIdRouteImport } from './routes/_authenticated/messages.$userId'
+import { Route as AuthenticatedDiscussionsIdRouteImport } from './routes/_authenticated/discussions.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -68,6 +74,17 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMembersRoute = AuthenticatedMembersRouteImport.update({
   id: '/members',
   path: '/members',
@@ -89,11 +106,34 @@ const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
   path: '/events',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDiscussionsRoute =
+  AuthenticatedDiscussionsRouteImport.update({
+    id: '/discussions',
+    path: '/discussions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMessagesUserIdRoute =
+  AuthenticatedMessagesUserIdRouteImport.update({
+    id: '/$userId',
+    path: '/$userId',
+    getParentRoute: () => AuthenticatedMessagesRoute,
+  } as any)
+const AuthenticatedDiscussionsIdRoute =
+  AuthenticatedDiscussionsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedDiscussionsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,14 +141,20 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/discussions': typeof AuthenticatedDiscussionsRouteWithChildren
   '/events': typeof AuthenticatedEventsRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/marketplace': typeof AuthenticatedMarketplaceRoute
   '/members': typeof AuthenticatedMembersRoute
+  '/messages': typeof AuthenticatedMessagesRouteWithChildren
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/resources': typeof AuthenticatedResourcesRoute
   '/showcase': typeof AuthenticatedShowcaseRoute
+  '/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
+  '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -116,14 +162,20 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/discussions': typeof AuthenticatedDiscussionsRouteWithChildren
   '/events': typeof AuthenticatedEventsRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/marketplace': typeof AuthenticatedMarketplaceRoute
   '/members': typeof AuthenticatedMembersRoute
+  '/messages': typeof AuthenticatedMessagesRouteWithChildren
+  '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/resources': typeof AuthenticatedResourcesRoute
   '/showcase': typeof AuthenticatedShowcaseRoute
+  '/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
+  '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,14 +185,20 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/discussions': typeof AuthenticatedDiscussionsRouteWithChildren
   '/_authenticated/events': typeof AuthenticatedEventsRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/marketplace': typeof AuthenticatedMarketplaceRoute
   '/_authenticated/members': typeof AuthenticatedMembersRoute
+  '/_authenticated/messages': typeof AuthenticatedMessagesRouteWithChildren
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/resources': typeof AuthenticatedResourcesRoute
   '/_authenticated/showcase': typeof AuthenticatedShowcaseRoute
+  '/_authenticated/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
+  '/_authenticated/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,14 +208,20 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin'
     | '/dashboard'
+    | '/discussions'
     | '/events'
     | '/feed'
     | '/marketplace'
     | '/members'
+    | '/messages'
+    | '/notifications'
     | '/profile'
     | '/resources'
     | '/showcase'
+    | '/discussions/$id'
+    | '/messages/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -165,14 +229,20 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/admin'
     | '/dashboard'
+    | '/discussions'
     | '/events'
     | '/feed'
     | '/marketplace'
     | '/members'
+    | '/messages'
+    | '/notifications'
     | '/profile'
     | '/resources'
     | '/showcase'
+    | '/discussions/$id'
+    | '/messages/$userId'
   id:
     | '__root__'
     | '/'
@@ -181,14 +251,20 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/discussions'
     | '/_authenticated/events'
     | '/_authenticated/feed'
     | '/_authenticated/marketplace'
     | '/_authenticated/members'
+    | '/_authenticated/messages'
+    | '/_authenticated/notifications'
     | '/_authenticated/profile'
     | '/_authenticated/resources'
     | '/_authenticated/showcase'
+    | '/_authenticated/discussions/$id'
+    | '/_authenticated/messages/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -265,6 +341,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages': {
+      id: '/_authenticated/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/members': {
       id: '/_authenticated/members'
       path: '/members'
@@ -293,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/discussions': {
+      id: '/_authenticated/discussions'
+      path: '/discussions'
+      fullPath: '/discussions'
+      preLoaderRoute: typeof AuthenticatedDiscussionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -300,26 +397,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages/$userId': {
+      id: '/_authenticated/messages/$userId'
+      path: '/$userId'
+      fullPath: '/messages/$userId'
+      preLoaderRoute: typeof AuthenticatedMessagesUserIdRouteImport
+      parentRoute: typeof AuthenticatedMessagesRoute
+    }
+    '/_authenticated/discussions/$id': {
+      id: '/_authenticated/discussions/$id'
+      path: '/$id'
+      fullPath: '/discussions/$id'
+      preLoaderRoute: typeof AuthenticatedDiscussionsIdRouteImport
+      parentRoute: typeof AuthenticatedDiscussionsRoute
+    }
   }
 }
 
+interface AuthenticatedDiscussionsRouteChildren {
+  AuthenticatedDiscussionsIdRoute: typeof AuthenticatedDiscussionsIdRoute
+}
+
+const AuthenticatedDiscussionsRouteChildren: AuthenticatedDiscussionsRouteChildren =
+  {
+    AuthenticatedDiscussionsIdRoute: AuthenticatedDiscussionsIdRoute,
+  }
+
+const AuthenticatedDiscussionsRouteWithChildren =
+  AuthenticatedDiscussionsRoute._addFileChildren(
+    AuthenticatedDiscussionsRouteChildren,
+  )
+
+interface AuthenticatedMessagesRouteChildren {
+  AuthenticatedMessagesUserIdRoute: typeof AuthenticatedMessagesUserIdRoute
+}
+
+const AuthenticatedMessagesRouteChildren: AuthenticatedMessagesRouteChildren = {
+  AuthenticatedMessagesUserIdRoute: AuthenticatedMessagesUserIdRoute,
+}
+
+const AuthenticatedMessagesRouteWithChildren =
+  AuthenticatedMessagesRoute._addFileChildren(
+    AuthenticatedMessagesRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDiscussionsRoute: typeof AuthenticatedDiscussionsRouteWithChildren
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedMarketplaceRoute: typeof AuthenticatedMarketplaceRoute
   AuthenticatedMembersRoute: typeof AuthenticatedMembersRoute
+  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedResourcesRoute: typeof AuthenticatedResourcesRoute
   AuthenticatedShowcaseRoute: typeof AuthenticatedShowcaseRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDiscussionsRoute: AuthenticatedDiscussionsRouteWithChildren,
   AuthenticatedEventsRoute: AuthenticatedEventsRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedMarketplaceRoute: AuthenticatedMarketplaceRoute,
   AuthenticatedMembersRoute: AuthenticatedMembersRoute,
+  AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedResourcesRoute: AuthenticatedResourcesRoute,
   AuthenticatedShowcaseRoute: AuthenticatedShowcaseRoute,
