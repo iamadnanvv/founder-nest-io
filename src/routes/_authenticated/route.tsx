@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -11,18 +12,12 @@ import {
   Briefcase,
   User as UserIcon,
   LogOut,
+  MessagesSquare,
+  Send,
+  Bell,
+  Shield,
 } from "lucide-react";
 
-/**
- * Auth gate for every `/dashboard`, `/feed`, `/profile`, etc. route.
- *
- * `beforeLoad` runs before children mount and redirects unauthenticated
- * users to `/auth`. `ssr: false` keeps this client-only — the Supabase
- * session lives in `localStorage`, which is not available during SSR.
- *
- * The layout renders the sidebar (desktop) / top nav (mobile) and an
- * `<Outlet />` for the matched child route.
- */
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
@@ -33,22 +28,66 @@ export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
 });
 
-
-const navItems = [
+const baseNav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/feed", label: "Community Feed", icon: MessageSquare },
-  { to: "/resources", label: "Resource Library", icon: BookOpen },
-  { to: "/showcase", label: "Startup Showcase", icon: Rocket },
+  { to: "/feed", label: "Feed", icon: MessageSquare },
+  { to: "/discussions", label: "Discussions", icon: MessagesSquare },
+  { to: "/messages", label: "Messages", icon: Send },
+  { to: "/resources", label: "Resources", icon: BookOpen },
+  { to: "/showcase", label: "Showcase", icon: Rocket },
   { to: "/events", label: "Events", icon: Calendar },
   { to: "/members", label: "Members", icon: Users },
-  { to: "/marketplace", label: "Marketplace", icon: Briefcase },
-  { to: "/profile", label: "My Profile", icon: UserIcon },
+  { to: "/marketplace", label: "Collab Board", icon: Briefcase },
+  { to: "/profile", label: "Profile", icon: UserIcon },
 ] as const;
 
 function AuthenticatedLayout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+  }, []);
+
+  const { data: isAdmin } = useQuery({
+    queryKey: ["is-admin", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId!).eq("role", "admin").maybeSingle();
+      return !!data;
+    },
+  });
+
+  const { data: unread } = useQuery({
+    queryKey: ["notif-unread", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId!)
+        .is("read_at", null);
+      return count ?? 0;
+    },
+    refetchInterval: 30000,
+  });
+
+  // Realtime notifications badge
+  useEffect(() => {
+    if (!userId) return;
+    const ch = supabase
+      .channel("notif-badge")
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` }, () => {
+        queryClient.invalidateQueries({ queryKey: ["notif-unread", userId] });
+        queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [userId, queryClient]);
+
+  const nav = [...baseNav, ...(isAdmin ? [{ to: "/admin" as const, label: "Admin", icon: Shield }] : [])];
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
@@ -59,7 +98,7 @@ function AuthenticatedLayout() {
 
   return (
     <div className="flex min-h-screen w-full bg-background">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r-2 border-foreground bg-surface p-5 lg:flex">
+      <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r-2 border-foreground bg-surface p-5 lg:flex">
         <Link to="/dashboard" className="mb-8 flex items-center gap-2">
           <div className="grid size-9 place-items-center border-2 border-foreground bg-acid">
             <span className="font-mono text-sm font-bold text-background">FH</span>
@@ -69,14 +108,14 @@ function AuthenticatedLayout() {
           </span>
         </Link>
         <nav className="flex-1 space-y-1">
-          {navItems.map((item) => {
+          {nav.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.to;
+            const active = pathname === item.to || pathname.startsWith(item.to + "/");
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 border-2 px-3 py-2.5 font-mono text-xs font-bold uppercase tracking-wider transition-all ${
+                className={`flex items-center gap-3 border-2 px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider transition-all ${
                   active
                     ? "border-foreground bg-acid text-background shadow-brutal-sm"
                     : "border-transparent text-muted-foreground hover:border-foreground hover:bg-background hover:text-foreground"
@@ -88,32 +127,44 @@ function AuthenticatedLayout() {
             );
           })}
         </nav>
+        <Link
+          to="/notifications"
+          className="mt-4 flex items-center justify-between border-2 border-foreground bg-background px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider text-foreground shadow-brutal-sm hover:bg-electric hover:text-background"
+        >
+          <span className="flex items-center gap-2"><Bell className="size-4" /> Alerts</span>
+          {unread ? <span className="grid size-5 place-items-center bg-hot text-[10px] text-background">{unread}</span> : null}
+        </Link>
         <button
           onClick={handleSignOut}
-          className="mt-4 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+          className="mt-2 flex items-center gap-3 px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <LogOut className="size-4" /> Sign out
         </button>
       </aside>
 
-      {/* Mobile top bar */}
       <div className="flex w-full flex-col">
-        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur-md lg:hidden">
+        <header className="sticky top-0 z-40 flex items-center justify-between border-b-2 border-foreground bg-background px-4 py-3 lg:hidden">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="grid size-7 place-items-center rounded-lg bg-gold">
-              <div className="size-2.5 rounded-full bg-background" />
+            <div className="grid size-8 place-items-center border-2 border-foreground bg-acid">
+              <span className="font-mono text-xs font-bold text-background">FH</span>
             </div>
-            <span className="font-display text-base font-bold text-foreground">FounderHunt</span>
+            <span className="font-display text-base font-bold text-foreground">founder/hunt</span>
           </Link>
-          <button onClick={handleSignOut} className="text-xs text-muted-foreground">Sign out</button>
+          <div className="flex items-center gap-2">
+            <Link to="/notifications" className="relative border-2 border-foreground bg-background p-2">
+              <Bell className="size-4" />
+              {unread ? <span className="absolute -right-1 -top-1 grid size-4 place-items-center bg-hot text-[9px] text-background">{unread}</span> : null}
+            </Link>
+            <button onClick={handleSignOut} className="text-xs text-muted-foreground">Sign out</button>
+          </div>
         </header>
-        <nav className="flex gap-1 overflow-x-auto border-b border-border bg-surface/50 px-3 py-2 lg:hidden">
-          {navItems.map((item) => (
+        <nav className="flex gap-1 overflow-x-auto border-b-2 border-foreground bg-surface px-3 py-2 lg:hidden">
+          {nav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-              activeProps={{ className: "bg-gold-soft text-gold" }}
+              className="shrink-0 border-2 border-transparent px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+              activeProps={{ className: "border-foreground bg-acid text-background" }}
             >
               {item.label}
             </Link>

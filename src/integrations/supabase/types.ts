@@ -14,6 +14,119 @@ export type Database = {
   }
   public: {
     Tables: {
+      collab_posts: {
+        Row: {
+          author_id: string
+          category: string | null
+          created_at: string
+          description: string
+          id: string
+          is_open: boolean
+          kind: Database["public"]["Enums"]["collab_kind"]
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          category?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          is_open?: boolean
+          kind: Database["public"]["Enums"]["collab_kind"]
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          category?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          is_open?: boolean
+          kind?: Database["public"]["Enums"]["collab_kind"]
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      discussion_replies: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          discussion_id: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          discussion_id: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          discussion_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussion_replies_discussion_id_fkey"
+            columns: ["discussion_id"]
+            isOneToOne: false
+            referencedRelation: "discussions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discussions: {
+        Row: {
+          author_id: string
+          body: string
+          category: Database["public"]["Enums"]["discussion_category"]
+          created_at: string
+          id: string
+          locked: boolean
+          pinned: boolean
+          reply_count: number
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          author_id: string
+          body: string
+          category?: Database["public"]["Enums"]["discussion_category"]
+          created_at?: string
+          id?: string
+          locked?: boolean
+          pinned?: boolean
+          reply_count?: number
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          category?: Database["public"]["Enums"]["discussion_category"]
+          created_at?: string
+          id?: string
+          locked?: boolean
+          pinned?: boolean
+          reply_count?: number
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       event_registrations: {
         Row: {
           created_at: string
@@ -75,6 +188,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          read_at: string | null
           receiver_id: string
           sender_id: string
         }
@@ -82,6 +196,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          read_at?: string | null
           receiver_id: string
           sender_id: string
         }
@@ -89,8 +204,48 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          read_at?: string | null
           receiver_id?: string
           sender_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          link: string | null
+          message: string
+          read_at: string | null
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          link?: string | null
+          message: string
+          read_at?: string | null
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          link?: string | null
+          message?: string
+          read_at?: string | null
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -359,6 +514,21 @@ export type Database = {
     }
     Enums: {
       app_role: "founder" | "mentor" | "investor" | "admin"
+      collab_kind: "cofounder" | "hire" | "offer"
+      discussion_category:
+        | "validation"
+        | "fundraising"
+        | "growth"
+        | "product"
+        | "hiring"
+        | "general"
+      notification_type:
+        | "post_like"
+        | "startup_upvote"
+        | "discussion_reply"
+        | "message"
+        | "event_reminder"
+        | "system"
       payment_status: "pending" | "success" | "failed" | "refunded"
       post_category:
         | "product_launch"
@@ -497,6 +667,23 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["founder", "mentor", "investor", "admin"],
+      collab_kind: ["cofounder", "hire", "offer"],
+      discussion_category: [
+        "validation",
+        "fundraising",
+        "growth",
+        "product",
+        "hiring",
+        "general",
+      ],
+      notification_type: [
+        "post_like",
+        "startup_upvote",
+        "discussion_reply",
+        "message",
+        "event_reminder",
+        "system",
+      ],
       payment_status: ["pending", "success", "failed", "refunded"],
       post_category: [
         "product_launch",
