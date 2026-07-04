@@ -50,7 +50,7 @@ function AuthPage() {
     setLoading(true);
     try {
       const phoneOk = phoneSchema.safeParse(phone);
-      if (!phoneOk.success) throw new Error(phoneOk.error.errors[0].message);
+      if (!phoneOk.success) throw new Error(phoneOk.error.issues[0].message);
 
       if (!otpSent) {
         // Sends an SMS OTP. `shouldCreateUser: true` creates a user on first sign-in.
@@ -63,7 +63,7 @@ function AuthPage() {
         toast.success("Code sent. Check your messages.");
       } else {
         const otpOk = otpSchema.safeParse(otp);
-        if (!otpOk.success) throw new Error(otpOk.error.errors[0].message);
+        if (!otpOk.success) throw new Error(otpOk.error.issues[0].message);
         const { error } = await supabase.auth.verifyOtp({
           phone: phoneOk.data,
           token: otpOk.data,
@@ -85,7 +85,7 @@ function AuthPage() {
     setLoading(true);
     try {
       const emailOk = emailSchema.safeParse(email);
-      if (!emailOk.success) throw new Error(emailOk.error.errors[0].message);
+      if (!emailOk.success) throw new Error(emailOk.error.issues[0].message);
 
       if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(emailOk.data, {
@@ -98,11 +98,11 @@ function AuthPage() {
       }
 
       const pwOk = passwordSchema.safeParse(password);
-      if (!pwOk.success) throw new Error(pwOk.error.errors[0].message);
+      if (!pwOk.success) throw new Error(pwOk.error.issues[0].message);
 
       if (mode === "signup") {
         const nameOk = nameSchema.safeParse(name);
-        if (!nameOk.success) throw new Error(nameOk.error.errors[0].message);
+        if (!nameOk.success) throw new Error(nameOk.error.issues[0].message);
         const { data, error } = await supabase.auth.signUp({
           email: emailOk.data,
           password: pwOk.data,
