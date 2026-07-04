@@ -36,11 +36,11 @@ type Mode = "signin" | "signup" | "forgot" | "phone";
 
 function AuthPage() {
   const navigate = useNavigate();
-  const search = Route.useSearch();
   const goNext = () => {
-    const n = safeNext(search.next);
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const n = safeNext(params?.get("next"));
     if (n) { window.location.href = n; return; }
-    goNext();
+    navigate({ to: "/dashboard" });
   };
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
