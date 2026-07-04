@@ -13,7 +13,7 @@ export default defineTool({
   handler: async ({ limit }, ctx) => {
     if (!ctx.isAuthenticated()) return unauthorized();
     const sb = supabaseForUser(ctx);
-    const { data, error } = await sb.from("events").select("*").order("start_at", { ascending: true }).limit(limit);
+    const { data, error } = await sb.from("events").select("*").order("event_date", { ascending: true }).limit(limit);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return { content: [{ type: "text", text: JSON.stringify(data) }], structuredContent: { events: data } };
   },

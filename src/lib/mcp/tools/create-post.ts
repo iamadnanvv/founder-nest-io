@@ -15,7 +15,7 @@ export default defineTool({
   handler: async ({ title, body, category }, ctx) => {
     if (!ctx.isAuthenticated()) return unauthorized();
     const sb = supabaseForUser(ctx);
-    const { data, error } = await sb.from("posts").insert({ title, body, category, user_id: ctx.getUserId()! }).select().single();
+    const { data, error } = await sb.from("posts").insert({ title, body, category: category as never, user_id: ctx.getUserId()! }).select().single();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return { content: [{ type: "text", text: `Post created: ${data.id}` }], structuredContent: { post: data } };
   },
