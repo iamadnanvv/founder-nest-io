@@ -15,6 +15,12 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+function safeNext(n: string | null | undefined): string | null {
+  if (!n) return null;
+  if (!n.startsWith("/") || n.startsWith("//") || n.startsWith("/\\")) return null;
+  return n;
+}
+
 const emailSchema = z.string().trim().email("Enter a valid email").max(255);
 const passwordSchema = z.string().min(8, "Min 8 characters").max(72);
 const nameSchema = z.string().trim().min(2, "Enter your name").max(80);
@@ -30,6 +36,12 @@ type Mode = "signin" | "signup" | "forgot" | "phone";
 
 function AuthPage() {
   const navigate = useNavigate();
+  const goNext = () => {
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const n = safeNext(params?.get("next"));
+    if (n) { window.location.href = n; return; }
+    navigate({ to: "/dashboard" });
+  };
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +53,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
+      if (data.session) goNext();
     });
   }, [navigate]);
 
@@ -50,7 +62,7 @@ function AuthPage() {
     setLoading(true);
     try {
       const phoneOk = phoneSchema.safeParse(phone);
-      if (!phoneOk.success) throw new Error(phoneOk.error.errors[0].message);
+      if (!phoneOk.success) throw new Error(phoneOk.error.issues[0].message);
 
       if (!otpSent) {
         // Sends an SMS OTP. `shouldCreateUser: true` creates a user on first sign-in.
@@ -63,7 +75,7 @@ function AuthPage() {
         toast.success("Code sent. Check your messages.");
       } else {
         const otpOk = otpSchema.safeParse(otp);
-        if (!otpOk.success) throw new Error(otpOk.error.errors[0].message);
+        if (!otpOk.success) throw new Error(otpOk.error.issues[0].message);
         const { error } = await supabase.auth.verifyOtp({
           phone: phoneOk.data,
           token: otpOk.data,
@@ -71,7 +83,7 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success("Welcome to FounderHunt.");
-        navigate({ to: "/dashboard" });
+        goNext();
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Phone sign-in failed");
@@ -85,7 +97,7 @@ function AuthPage() {
     setLoading(true);
     try {
       const emailOk = emailSchema.safeParse(email);
-      if (!emailOk.success) throw new Error(emailOk.error.errors[0].message);
+      if (!emailOk.success) throw new Error(emailOk.error.issues[0].message);
 
       if (mode === "forgot") {
         const { error } = await supabase.auth.resetPasswordForEmail(emailOk.data, {
@@ -98,11 +110,11 @@ function AuthPage() {
       }
 
       const pwOk = passwordSchema.safeParse(password);
-      if (!pwOk.success) throw new Error(pwOk.error.errors[0].message);
+      if (!pwOk.success) throw new Error(pwOk.error.issues[0].message);
 
       if (mode === "signup") {
         const nameOk = nameSchema.safeParse(name);
-        if (!nameOk.success) throw new Error(nameOk.error.errors[0].message);
+        if (!nameOk.success) throw new Error(nameOk.error.issues[0].message);
         const { data, error } = await supabase.auth.signUp({
           email: emailOk.data,
           password: pwOk.data,
@@ -119,7 +131,7 @@ function AuthPage() {
           return;
         }
         toast.success("Account created. Welcome to FounderHunt.");
-        navigate({ to: "/dashboard" });
+        goNext();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: emailOk.data, password: pwOk.data });
         if (error) {
@@ -128,7 +140,7 @@ function AuthPage() {
           }
           throw error;
         }
-        navigate({ to: "/dashboard" });
+        goNext();
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
