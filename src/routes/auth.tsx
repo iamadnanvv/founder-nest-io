@@ -6,6 +6,9 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Sign In · FounderHuntCommunity" },
@@ -14,6 +17,12 @@ export const Route = createFileRoute("/auth")({
   }),
   component: AuthPage,
 });
+
+function safeNext(n: string | undefined): string | null {
+  if (!n) return null;
+  if (!n.startsWith("/") || n.startsWith("//") || n.startsWith("/\\")) return null;
+  return n;
+}
 
 const emailSchema = z.string().trim().email("Enter a valid email").max(255);
 const passwordSchema = z.string().min(8, "Min 8 characters").max(72);
