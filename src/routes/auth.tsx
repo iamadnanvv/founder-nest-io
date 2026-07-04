@@ -39,6 +39,12 @@ type Mode = "signin" | "signup" | "forgot" | "phone";
 
 function AuthPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  const goNext = () => {
+    const n = safeNext(search.next);
+    if (n) { window.location.href = n; return; }
+    goNext();
+  };
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +56,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
+      if (data.session) goNext();
     });
   }, [navigate]);
 
@@ -80,7 +86,7 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success("Welcome to FounderHunt.");
-        navigate({ to: "/dashboard" });
+        goNext();
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Phone sign-in failed");
@@ -128,7 +134,7 @@ function AuthPage() {
           return;
         }
         toast.success("Account created. Welcome to FounderHunt.");
-        navigate({ to: "/dashboard" });
+        goNext();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: emailOk.data, password: pwOk.data });
         if (error) {
@@ -137,7 +143,7 @@ function AuthPage() {
           }
           throw error;
         }
-        navigate({ to: "/dashboard" });
+        goNext();
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
