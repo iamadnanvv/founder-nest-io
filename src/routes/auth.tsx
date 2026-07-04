@@ -6,9 +6,10 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>) => ({
-    next: typeof s.next === "string" ? s.next : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): { next?: string } => {
+    const n = typeof s.next === "string" ? s.next : undefined;
+    return n ? { next: n } : {};
+  },
   head: () => ({
     meta: [
       { title: "Sign In · FounderHuntCommunity" },
