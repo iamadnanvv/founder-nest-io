@@ -57,12 +57,7 @@
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
-            "title": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 200
-            },
-            "body": {
+            "content": {
               "type": "string",
               "minLength": 1,
               "maxLength": 5000
@@ -72,11 +67,14 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 60
+            },
+            "image_url": {
+              "type": "string",
+              "format": "uri"
             }
           },
           "required": [
-            "title",
-            "body"
+            "content"
           ]
         },
         "outputSchema": null
