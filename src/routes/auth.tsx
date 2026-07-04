@@ -6,10 +6,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): { next?: string } => {
-    const n = typeof s.next === "string" ? s.next : undefined;
-    return n ? { next: n } : {};
-  },
   head: () => ({
     meta: [
       { title: "Sign In · FounderHuntCommunity" },
@@ -19,7 +15,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-function safeNext(n: string | undefined): string | null {
+function safeNext(n: string | null | undefined): string | null {
   if (!n) return null;
   if (!n.startsWith("/") || n.startsWith("//") || n.startsWith("/\\")) return null;
   return n;
