@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MessageSquare, Rocket, TrendingUp } from "lucide-react";
+import { Calendar, MessageSquare, Rocket, TrendingUp, Megaphone, Users } from "lucide-react";
+
+const WHATSAPP_CHANNEL_URL = "https://whatsapp.com/channel/0029VbClPX9KgsNsQnp5yB2E";
+const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/KByJpDAN8JO0p5MhCgccdR";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard · FounderHuntCommunity" }] }),
@@ -53,6 +56,36 @@ function DashboardPage() {
         </h1>
         <p className="mt-2 text-muted-foreground">Here's what's happening in your community today.</p>
       </header>
+
+      <section className="grid gap-4 border-2 border-foreground bg-acid p-5 shadow-brutal-sm sm:grid-cols-[1fr_auto] sm:items-center">
+        <div>
+          <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-background/80">Join the conversation</p>
+          <h2 className="mt-1 font-display text-2xl font-black uppercase tracking-tight text-background">
+            FounderHunt on WhatsApp
+          </h2>
+          <p className="mt-1 text-sm text-background/90">
+            Get shipping updates in the channel and hang out with founders in the community group.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={WHATSAPP_CHANNEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border-2 border-foreground bg-background px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground shadow-brutal-sm transition-transform hover:translate-x-[-2px] hover:translate-y-[-2px]"
+          >
+            <Megaphone className="size-4" /> Channel
+          </a>
+          <a
+            href={WHATSAPP_COMMUNITY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 border-2 border-foreground bg-foreground px-4 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-background shadow-brutal-sm transition-transform hover:translate-x-[-2px] hover:translate-y-[-2px]"
+          >
+            <Users className="size-4" /> Community
+          </a>
+        </div>
+      </section>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard icon={MessageSquare} label="Discussions" value={String(posts?.length ?? 0)} />
