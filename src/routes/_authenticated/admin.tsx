@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "users" | "posts" | "discussions" | "startups" | "payments" | "events";
+type Tab = "users" | "posts" | "discussions" | "startups" | "payments" | "events" | "resources";
 
 function AdminPage() {
   const [tab, setTab] = useState<Tab>("users");
