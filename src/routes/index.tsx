@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import dashboardHero from "@/assets/dashboard-hero.jpg";
+import { TermsLink, PrivacyLink } from "@/components/legal-modals";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -433,9 +434,9 @@ function Footer() {
         <div className="flex flex-wrap items-center justify-center gap-4 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
           <a href="https://whatsapp.com/channel/0029VbClPX9KgsNsQnp5yB2E" target="_blank" rel="noopener noreferrer" className="border-2 border-foreground bg-acid px-3 py-1.5 text-background hover:translate-x-[-1px] hover:translate-y-[-1px]">wa channel</a>
           <a href="https://chat.whatsapp.com/KByJpDAN8JO0p5MhCgccdR" target="_blank" rel="noopener noreferrer" className="border-2 border-foreground bg-foreground px-3 py-1.5 text-background hover:translate-x-[-1px] hover:translate-y-[-1px]">wa community</a>
-          <a href="#" className="hover:text-acid">terms</a>
-          <a href="#" className="hover:text-acid">privacy</a>
-          <a href="#" className="hover:text-acid">contact</a>
+          <TermsLink className="uppercase hover:text-acid" />
+          <PrivacyLink className="uppercase hover:text-acid" />
+          <a href="mailto:hello@founderhunt.community" className="hover:text-acid">contact</a>
         </div>
         <div className="font-mono text-[10px] uppercase text-muted-foreground">© 2026 · built_in_public</div>
       </div>

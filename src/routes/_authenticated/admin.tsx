@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "users" | "posts" | "discussions" | "startups" | "payments" | "events";
+type Tab = "users" | "posts" | "discussions" | "startups" | "payments" | "events" | "resources";
 
 function AdminPage() {
   const [tab, setTab] = useState<Tab>("users");
@@ -33,7 +33,7 @@ function AdminPage() {
       </header>
 
       <nav className="flex flex-wrap gap-2 border-b-2 border-foreground pb-3">
-        {(["users", "posts", "discussions", "startups", "payments", "events"] as Tab[]).map((t) => (
+        {(["users", "posts", "discussions", "startups", "payments", "events", "resources"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -52,6 +52,7 @@ function AdminPage() {
       {tab === "startups" && <StartupsTab />}
       {tab === "payments" && <PaymentsTab />}
       {tab === "events" && <EventsTab />}
+      {tab === "resources" && <ResourcesTab />}
     </div>
   );
 }
@@ -261,6 +262,55 @@ function EventsTab() {
               <div className="text-xs text-muted-foreground">{new Date(ev.event_date).toLocaleString()} · {ev.speaker}</div>
             </div>
             <button onClick={() => del(ev.id)} className="border-2 border-foreground bg-background p-2 hover:bg-hot hover:text-background"><Trash2 className="size-3" /></button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ResourcesTab() {
+  const qc = useQueryClient();
+  const [form, setForm] = useState({ title: "", category: "", description: "", file_url: "" });
+  const { data } = useQuery({
+    queryKey: ["admin-resources"],
+    queryFn: async () => (await supabase.from("resources").select("*").order("created_at", { ascending: false })).data ?? [],
+  });
+  const create = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title || !form.category || !form.file_url) { toast.error("Title, category, file URL required"); return; }
+    const { error } = await supabase.from("resources").insert(form);
+    if (error) { toast.error(error.message); return; }
+    setForm({ title: "", category: "", description: "", file_url: "" });
+    qc.invalidateQueries({ queryKey: ["admin-resources"] });
+    qc.invalidateQueries({ queryKey: ["resources"] });
+    toast.success("Resource added");
+  };
+  const del = async (id: string) => {
+    if (!confirm("Delete resource?")) return;
+    await supabase.from("resources").delete().eq("id", id);
+    qc.invalidateQueries({ queryKey: ["admin-resources"] });
+    qc.invalidateQueries({ queryKey: ["resources"] });
+  };
+  return (
+    <div className="space-y-4">
+      <form onSubmit={create} className="grid gap-2 border-2 border-foreground bg-surface p-4 md:grid-cols-2">
+        <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Title" className="border-2 border-foreground bg-background px-3 py-2 text-sm" />
+        <input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Category (e.g. Playbooks, AI, SOPs)" className="border-2 border-foreground bg-background px-3 py-2 text-sm" />
+        <input value={form.file_url} onChange={(e) => setForm({ ...form, file_url: e.target.value })} placeholder="File URL (https://…)" className="border-2 border-foreground bg-background px-3 py-2 text-sm md:col-span-2" />
+        <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description" rows={3} className="border-2 border-foreground bg-background px-3 py-2 text-sm md:col-span-2" />
+        <button type="submit" className="border-2 border-foreground bg-acid px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-background shadow-brutal-sm md:col-span-2">Publish resource</button>
+      </form>
+      <div className="space-y-2">
+        {(data ?? []).map((r: any) => (
+          <div key={r.id} className="flex items-center gap-2 border-2 border-foreground bg-surface p-3">
+            <div className="min-w-0 flex-1">
+              <div className="font-display font-bold">{r.title}</div>
+              <div className="font-mono text-[10px] uppercase text-muted-foreground">{r.category}</div>
+              {r.description && <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{r.description}</p>}
+            </div>
+            <a href={r.file_url} target="_blank" rel="noopener noreferrer" className="border-2 border-foreground bg-background px-2 py-1 font-mono text-[10px] uppercase hover:bg-electric hover:text-background">Open</a>
+            <button onClick={() => del(r.id)} className="border-2 border-foreground bg-background p-2 hover:bg-hot hover:text-background"><Trash2 className="size-3" /></button>
           </div>
         ))}
       </div>
