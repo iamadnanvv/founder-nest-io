@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MessageSquare, Rocket, TrendingUp } from "lucide-react";
+import { Calendar, MessageSquare, Rocket, TrendingUp, Megaphone, Users } from "lucide-react";
+
+const WHATSAPP_CHANNEL_URL = "https://whatsapp.com/channel/0029VbClPX9KgsNsQnp5yB2E";
+const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/KByJpDAN8JO0p5MhCgccdR";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard · FounderHuntCommunity" }] }),
