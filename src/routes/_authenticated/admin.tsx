@@ -33,7 +33,7 @@ function AdminPage() {
       </header>
 
       <nav className="flex flex-wrap gap-2 border-b-2 border-foreground pb-3">
-        {(["users", "posts", "discussions", "startups", "payments", "events"] as Tab[]).map((t) => (
+        {(["users", "posts", "discussions", "startups", "payments", "events", "resources"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -52,6 +52,7 @@ function AdminPage() {
       {tab === "startups" && <StartupsTab />}
       {tab === "payments" && <PaymentsTab />}
       {tab === "events" && <EventsTab />}
+      {tab === "resources" && <ResourcesTab />}
     </div>
   );
 }
