@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import dashboardHero from "@/assets/dashboard-hero.jpg";
+import { TermsLink, PrivacyLink } from "@/components/legal-modals";
 
 export const Route = createFileRoute("/")({
   head: () => ({
