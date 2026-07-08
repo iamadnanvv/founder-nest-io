@@ -3,6 +3,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  generateTelegramLinkCode,
+  getTelegramStatus,
+  unlinkTelegram,
+  updateTelegramPrefs,
+} from "@/lib/telegram.functions";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "My Profile · FounderHuntCommunity" }] }),
