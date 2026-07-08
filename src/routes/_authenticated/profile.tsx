@@ -83,7 +83,94 @@ function ProfilePage() {
         </div>
         <button type="submit" className="rounded-full bg-gold px-6 py-2.5 text-sm font-bold text-background">Save profile</button>
       </form>
+
+      <TelegramCard />
     </div>
+  );
+}
+
+function TelegramCard() {
+  const qc = useQueryClient();
+  const genCode = useServerFn(generateTelegramLinkCode);
+  const status = useServerFn(getTelegramStatus);
+  const unlink = useServerFn(unlinkTelegram);
+  const savePrefs = useServerFn(updateTelegramPrefs);
+
+  const { data } = useQuery({
+    queryKey: ["telegram-status"],
+    queryFn: () => status(),
+  });
+  const [code, setCode] = useState<string | null>(null);
+
+  const handleGenerate = async () => {
+    try {
+      const res = await genCode();
+      setCode(res.code);
+      toast.success("Code generated — valid 15 minutes");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed");
+    }
+  };
+
+  const handleUnlink = async () => {
+    await unlink();
+    toast.success("Telegram unlinked");
+    qc.invalidateQueries({ queryKey: ["telegram-status"] });
+  };
+
+  const togglePref = async (key: "notify_dm" | "notify_reply" | "notify_engagement" | "notify_events", value: boolean) => {
+    await savePrefs({ data: { [key]: value } as any });
+    qc.invalidateQueries({ queryKey: ["telegram-status"] });
+  };
+
+  const linked = data?.linked;
+  const link = data?.link as any;
+
+  return (
+    <section className="space-y-4 rounded-3xl border border-border bg-surface p-6">
+      <header>
+        <h2 className="font-display text-2xl font-bold text-foreground">Telegram Bot</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Get notifications, browse the feed, and post from Telegram. Open <a className="underline" href="https://t.me" target="_blank" rel="noopener noreferrer">your bot</a> and send <code className="rounded bg-background px-1">/start</code>.
+        </p>
+      </header>
+
+      {!linked ? (
+        <div className="space-y-3">
+          <button onClick={handleGenerate} type="button" className="rounded-full bg-electric px-5 py-2 text-sm font-bold text-background">
+            Generate link code
+          </button>
+          {code && (
+            <div className="rounded-2xl border-2 border-dashed border-foreground bg-background p-4">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">Send this in Telegram:</p>
+              <p className="mt-2 font-mono text-2xl font-black tracking-widest text-foreground">/link {code}</p>
+              <p className="mt-2 text-xs text-muted-foreground">Expires in 15 minutes.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border bg-background p-4 text-sm">
+            ✅ Linked{link?.telegram_username ? ` as @${link.telegram_username}` : ""} · <button className="underline" onClick={handleUnlink}>Unlink</button>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <PrefToggle label="Direct messages" checked={!!link?.notify_dm} onChange={(v) => togglePref("notify_dm", v)} />
+            <PrefToggle label="Discussion replies" checked={!!link?.notify_reply} onChange={(v) => togglePref("notify_reply", v)} />
+            <PrefToggle label="Likes & upvotes" checked={!!link?.notify_engagement} onChange={(v) => togglePref("notify_engagement", v)} />
+            <PrefToggle label="Event updates" checked={!!link?.notify_events} onChange={(v) => togglePref("notify_events", v)} />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function PrefToggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="flex items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-sm">
+      <span>{label}</span>
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="size-4 accent-gold" />
+    </label>
   );
 }
 
