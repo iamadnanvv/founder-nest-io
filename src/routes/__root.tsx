@@ -60,8 +60,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "FounderHuntCommunity — Build Faster. Validate Smarter. Scale Together." },
       { name: "twitter:description", content: "An exclusive community of SaaS and AI founders. Lifetime access for ₹599." },
-      { property: "og:image", content: "https://founder-nest-io.lovable.app/og-image.jpg" },
-      { name: "twitter:image", content: "https://founder-nest-io.lovable.app/og-image.jpg" },
+      { property: "og:image", content: "https://foundercommunity.vercel.app/og-image.jpg" },
+      { name: "twitter:image", content: "https://foundercommunity.vercel.app/og-image.jpg" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

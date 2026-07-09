@@ -5,7 +5,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { sendMessage } from "@/lib/telegram.server";
 
-const PUBLIC_ORIGIN = "https://founder-nest-io.lovable.app";
+const PUBLIC_ORIGIN = "https://foundercommunity.vercel.app";
 
 const TYPE_EMOJI: Record<string, string> = {
   message: "✉️",

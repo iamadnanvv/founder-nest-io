@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { timingSafeEqual } from "crypto";
 import { deriveWebhookSecret, sendMessage } from "@/lib/telegram.server";
 
-const PUBLIC_ORIGIN = "https://founder-nest-io.lovable.app";
+const PUBLIC_ORIGIN = "https://foundercommunity.vercel.app";
 
 type TgMessage = {
   message_id: number;
