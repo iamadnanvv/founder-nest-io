@@ -16,6 +16,7 @@ import {
   Send,
   Bell,
   Shield,
+  Users2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -36,8 +37,9 @@ const baseNav = [
   { to: "/resources", label: "Resources", icon: BookOpen },
   { to: "/showcase", label: "Showcase", icon: Rocket },
   { to: "/events", label: "Events", icon: Calendar },
+  { to: "/communities", label: "Communities", icon: Users2 },
   { to: "/members", label: "Members", icon: Users },
-  { to: "/marketplace", label: "Collab Board", icon: Briefcase },
+  { to: "/marketplace", label: "Opportunities", icon: Briefcase },
   { to: "/profile", label: "Profile", icon: UserIcon },
 ] as const;
 

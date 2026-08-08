@@ -31,7 +31,9 @@ function ProfilePage() {
   const [form, setForm] = useState({
     full_name: "", bio: "", startup_name: "", startup_website: "",
     startup_stage: "", industry: "", linkedin_url: "", looking_for: "", funding_status: "",
+    location: "", founder_type: "", profile_image: "", skills: "", interests: "",
   });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -45,6 +47,11 @@ function ProfilePage() {
         linkedin_url: profile.linkedin_url ?? "",
         looking_for: profile.looking_for ?? "",
         funding_status: profile.funding_status ?? "",
+        location: (profile as any).location ?? "",
+        founder_type: (profile as any).founder_type ?? "",
+        profile_image: profile.profile_image ?? "",
+        skills: (profile.skills ?? []).join(", "),
+        interests: ((profile as any).interests ?? []).join(", "),
       });
     }
   }, [profile]);
@@ -53,11 +60,28 @@ function ProfilePage() {
     e.preventDefault();
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
-    const { error } = await supabase.from("profiles").update(form).eq("id", u.user.id);
+    const toList = (v: string) => {
+      const list = v.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+      return list.length ? list : null;
+    };
+    const url = form.profile_image.trim();
+    if (url && !/^https?:\/\//i.test(url)) { toast.error("Photo URL must start with http(s)://"); return; }
+    setSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        ...form,
+        profile_image: url || null,
+        skills: toList(form.skills),
+        interests: toList(form.interests),
+      })
+      .eq("id", u.user.id);
+    setSaving(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Profile saved");
     qc.invalidateQueries({ queryKey: ["my-profile-edit"] });
     qc.invalidateQueries({ queryKey: ["my-profile"] });
+    qc.invalidateQueries({ queryKey: ["members"] });
   };
 
   return (
@@ -71,17 +95,24 @@ function ProfilePage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Input label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} />
           <Input label="LinkedIn URL" value={form.linkedin_url} onChange={(v) => setForm({ ...form, linkedin_url: v })} placeholder="https://linkedin.com/in/..." />
+          <Input label="Profile photo URL" value={form.profile_image} onChange={(v) => setForm({ ...form, profile_image: v })} placeholder="https://…" />
+          <Input label="Location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} placeholder="Bengaluru, India" />
         </div>
         <Textarea label="Bio" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} />
         <div className="grid gap-4 sm:grid-cols-2">
+          <Input label="Founder type" value={form.founder_type} onChange={(v) => setForm({ ...form, founder_type: v })} placeholder="technical / business / design / investor" />
           <Input label="Startup name" value={form.startup_name} onChange={(v) => setForm({ ...form, startup_name: v })} />
           <Input label="Startup website" value={form.startup_website} onChange={(v) => setForm({ ...form, startup_website: v })} placeholder="https://" />
           <Input label="Stage" value={form.startup_stage} onChange={(v) => setForm({ ...form, startup_stage: v })} placeholder="idea / mvp / launched / scaling" />
           <Input label="Industry" value={form.industry} onChange={(v) => setForm({ ...form, industry: v })} />
           <Input label="Funding status" value={form.funding_status} onChange={(v) => setForm({ ...form, funding_status: v })} placeholder="bootstrapped / pre-seed / seed…" />
           <Input label="Looking for" value={form.looking_for} onChange={(v) => setForm({ ...form, looking_for: v })} placeholder="co-founder / advisors / customers…" />
+          <Input label="Skills (comma separated)" value={form.skills} onChange={(v) => setForm({ ...form, skills: v })} placeholder="react, growth, sales" />
+          <Input label="Interests (comma separated)" value={form.interests} onChange={(v) => setForm({ ...form, interests: v })} placeholder="ai, fintech, devtools" />
         </div>
-        <button type="submit" className="rounded-full bg-gold px-6 py-2.5 text-sm font-bold text-background">Save profile</button>
+        <button type="submit" disabled={saving} className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+          {saving ? "Saving…" : "Save profile"}
+        </button>
       </form>
 
       <TelegramCard />
