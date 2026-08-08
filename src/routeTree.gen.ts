@@ -30,8 +30,10 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as AuthenticatedCommunitiesIndexRouteImport } from './routes/_authenticated/communities.index'
 import { Route as AuthenticatedMessagesUserIdRouteImport } from './routes/_authenticated/messages.$userId'
 import { Route as AuthenticatedDiscussionsIdRouteImport } from './routes/_authenticated/discussions.$id'
+import { Route as AuthenticatedCommunitiesSlugRouteImport } from './routes/_authenticated/communities.$slug'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
@@ -146,6 +148,12 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedCommunitiesIndexRoute =
+  AuthenticatedCommunitiesIndexRouteImport.update({
+    id: '/communities/',
+    path: '/communities/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMessagesUserIdRoute =
   AuthenticatedMessagesUserIdRouteImport.update({
     id: '/$userId',
@@ -157,6 +165,12 @@ const AuthenticatedDiscussionsIdRoute =
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedDiscussionsRoute,
+  } as any)
+const AuthenticatedCommunitiesSlugRoute =
+  AuthenticatedCommunitiesSlugRouteImport.update({
+    id: '/communities/$slug',
+    path: '/communities/$slug',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
@@ -204,8 +218,10 @@ export interface FileRoutesByFullPath {
   '/showcase': typeof AuthenticatedShowcaseRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/communities/$slug': typeof AuthenticatedCommunitiesSlugRoute
   '/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
+  '/communities/': typeof AuthenticatedCommunitiesIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
 }
@@ -232,8 +248,10 @@ export interface FileRoutesByTo {
   '/showcase': typeof AuthenticatedShowcaseRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/communities/$slug': typeof AuthenticatedCommunitiesSlugRoute
   '/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
+  '/communities': typeof AuthenticatedCommunitiesIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
 }
@@ -262,8 +280,10 @@ export interface FileRoutesById {
   '/_authenticated/showcase': typeof AuthenticatedShowcaseRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/_authenticated/communities/$slug': typeof AuthenticatedCommunitiesSlugRoute
   '/_authenticated/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
   '/_authenticated/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
+  '/_authenticated/communities/': typeof AuthenticatedCommunitiesIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
 }
@@ -292,8 +312,10 @@ export interface FileRouteTypes {
     | '/showcase'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/communities/$slug'
     | '/discussions/$id'
     | '/messages/$userId'
+    | '/communities/'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -320,8 +342,10 @@ export interface FileRouteTypes {
     | '/showcase'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/communities/$slug'
     | '/discussions/$id'
     | '/messages/$userId'
+    | '/communities'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
   id:
@@ -349,8 +373,10 @@ export interface FileRouteTypes {
     | '/_authenticated/showcase'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/_authenticated/communities/$slug'
     | '/_authenticated/discussions/$id'
     | '/_authenticated/messages/$userId'
+    | '/_authenticated/communities/'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
   fileRoutesById: FileRoutesById
@@ -520,6 +546,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/communities/': {
+      id: '/_authenticated/communities/'
+      path: '/communities'
+      fullPath: '/communities/'
+      preLoaderRoute: typeof AuthenticatedCommunitiesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/messages/$userId': {
       id: '/_authenticated/messages/$userId'
       path: '/$userId'
@@ -533,6 +566,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/discussions/$id'
       preLoaderRoute: typeof AuthenticatedDiscussionsIdRouteImport
       parentRoute: typeof AuthenticatedDiscussionsRoute
+    }
+    '/_authenticated/communities/$slug': {
+      id: '/_authenticated/communities/$slug'
+      path: '/communities/$slug'
+      fullPath: '/communities/$slug'
+      preLoaderRoute: typeof AuthenticatedCommunitiesSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
@@ -605,6 +645,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedResourcesRoute: typeof AuthenticatedResourcesRoute
   AuthenticatedShowcaseRoute: typeof AuthenticatedShowcaseRoute
+  AuthenticatedCommunitiesSlugRoute: typeof AuthenticatedCommunitiesSlugRoute
+  AuthenticatedCommunitiesIndexRoute: typeof AuthenticatedCommunitiesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -620,6 +662,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedResourcesRoute: AuthenticatedResourcesRoute,
   AuthenticatedShowcaseRoute: AuthenticatedShowcaseRoute,
+  AuthenticatedCommunitiesSlugRoute: AuthenticatedCommunitiesSlugRoute,
+  AuthenticatedCommunitiesIndexRoute: AuthenticatedCommunitiesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -14,6 +14,10 @@ const KINDS = [
   { value: "cofounder", label: "Co-founder", color: "bg-hot" },
   { value: "hire", label: "Hire", color: "bg-electric" },
   { value: "offer", label: "Offer", color: "bg-acid" },
+  { value: "job", label: "Job", color: "bg-electric" },
+  { value: "partnership", label: "Partnership", color: "bg-gold" },
+  { value: "mentorship", label: "Mentorship", color: "bg-acid" },
+  { value: "funding", label: "Funding", color: "bg-hot" },
 ] as const;
 type Kind = (typeof KINDS)[number]["value"];
 

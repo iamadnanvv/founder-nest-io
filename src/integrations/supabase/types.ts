@@ -53,6 +53,71 @@ export type Database = {
         }
         Relationships: []
       }
+      communities: {
+        Row: {
+          cover_image: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          topic: string | null
+          updated_at: string
+        }
+        Insert: {
+          cover_image?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cover_image?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      community_members: {
+        Row: {
+          community_id: string
+          created_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          created_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          created_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_members_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       discussion_replies: {
         Row: {
           author_id: string
@@ -183,6 +248,24 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -285,6 +368,64 @@ export type Database = {
         }
         Relationships: []
       }
+      post_bookmarks: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_bookmarks_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_likes: {
         Row: {
           created_at: string
@@ -314,6 +455,7 @@ export type Database = {
       posts: {
         Row: {
           category: Database["public"]["Enums"]["post_category"]
+          community_id: string | null
           content: string
           created_at: string
           id: string
@@ -322,6 +464,7 @@ export type Database = {
         }
         Insert: {
           category?: Database["public"]["Enums"]["post_category"]
+          community_id?: string | null
           content: string
           created_at?: string
           id?: string
@@ -330,24 +473,36 @@ export type Database = {
         }
         Update: {
           category?: Database["public"]["Enums"]["post_category"]
+          community_id?: string | null
           content?: string
           created_at?: string
           id?: string
           image_url?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
           bio: string | null
           created_at: string
+          founder_type: string | null
           full_name: string | null
           funding_status: string | null
           id: string
           industry: string | null
+          interests: string[] | null
           is_paid: boolean
           linkedin_url: string | null
+          location: string | null
           looking_for: string | null
           profile_image: string | null
           skills: string[] | null
@@ -359,12 +514,15 @@ export type Database = {
         Insert: {
           bio?: string | null
           created_at?: string
+          founder_type?: string | null
           full_name?: string | null
           funding_status?: string | null
           id: string
           industry?: string | null
+          interests?: string[] | null
           is_paid?: boolean
           linkedin_url?: string | null
+          location?: string | null
           looking_for?: string | null
           profile_image?: string | null
           skills?: string[] | null
@@ -376,12 +534,15 @@ export type Database = {
         Update: {
           bio?: string | null
           created_at?: string
+          founder_type?: string | null
           full_name?: string | null
           funding_status?: string | null
           id?: string
           industry?: string | null
+          interests?: string[] | null
           is_paid?: boolean
           linkedin_url?: string | null
+          location?: string | null
           looking_for?: string | null
           profile_image?: string | null
           skills?: string[] | null
@@ -389,6 +550,36 @@ export type Database = {
           startup_stage?: string | null
           startup_website?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          status: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          status?: string
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          status?: string
+          target_id?: string
+          target_type?: string
         }
         Relationships: []
       }
@@ -577,7 +768,14 @@ export type Database = {
     }
     Enums: {
       app_role: "founder" | "mentor" | "investor" | "admin"
-      collab_kind: "cofounder" | "hire" | "offer"
+      collab_kind:
+        | "cofounder"
+        | "hire"
+        | "offer"
+        | "job"
+        | "partnership"
+        | "mentorship"
+        | "funding"
       discussion_category:
         | "validation"
         | "fundraising"
@@ -592,6 +790,9 @@ export type Database = {
         | "message"
         | "event_reminder"
         | "system"
+        | "post_comment"
+        | "follow"
+        | "mention"
       payment_status: "pending" | "success" | "failed" | "refunded"
       post_category:
         | "product_launch"
@@ -730,7 +931,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["founder", "mentor", "investor", "admin"],
-      collab_kind: ["cofounder", "hire", "offer"],
+      collab_kind: [
+        "cofounder",
+        "hire",
+        "offer",
+        "job",
+        "partnership",
+        "mentorship",
+        "funding",
+      ],
       discussion_category: [
         "validation",
         "fundraising",
@@ -746,6 +955,9 @@ export const Constants = {
         "message",
         "event_reminder",
         "system",
+        "post_comment",
+        "follow",
+        "mention",
       ],
       payment_status: ["pending", "success", "failed", "refunded"],
       post_category: [

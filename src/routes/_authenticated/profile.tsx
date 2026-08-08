@@ -31,7 +31,9 @@ function ProfilePage() {
   const [form, setForm] = useState({
     full_name: "", bio: "", startup_name: "", startup_website: "",
     startup_stage: "", industry: "", linkedin_url: "", looking_for: "", funding_status: "",
+    location: "", founder_type: "", profile_image: "", skills: "", interests: "",
   });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -45,6 +47,11 @@ function ProfilePage() {
         linkedin_url: profile.linkedin_url ?? "",
         looking_for: profile.looking_for ?? "",
         funding_status: profile.funding_status ?? "",
+        location: (profile as any).location ?? "",
+        founder_type: (profile as any).founder_type ?? "",
+        profile_image: profile.profile_image ?? "",
+        skills: (profile.skills ?? []).join(", "),
+        interests: ((profile as any).interests ?? []).join(", "),
       });
     }
   }, [profile]);
@@ -53,11 +60,28 @@ function ProfilePage() {
     e.preventDefault();
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
-    const { error } = await supabase.from("profiles").update(form).eq("id", u.user.id);
+    const toList = (v: string) => {
+      const list = v.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+      return list.length ? list : null;
+    };
+    const url = form.profile_image.trim();
+    if (url && !/^https?:\/\//i.test(url)) { toast.error("Photo URL must start with http(s)://"); return; }
+    setSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        ...form,
+        profile_image: url || null,
+        skills: toList(form.skills),
+        interests: toList(form.interests),
+      })
+      .eq("id", u.user.id);
+    setSaving(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Profile saved");
     qc.invalidateQueries({ queryKey: ["my-profile-edit"] });
     qc.invalidateQueries({ queryKey: ["my-profile"] });
+    qc.invalidateQueries({ queryKey: ["members"] });
   };
 
   return (
