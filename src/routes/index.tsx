@@ -6,9 +6,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "FounderHuntCommunity // ship_faster.exe" },
-      { name: "description", content: "Where SaaS + AI founders actually ship. Lifetime access. ₹599. No subs. No gurus." },
+      { name: "description", content: "Where SaaS + AI founders actually ship. Lifetime access. ₹1,599. No subs. No gurus." },
       { property: "og:title", content: "FounderHuntCommunity" },
-      { property: "og:description", content: "Where SaaS + AI founders actually ship. Lifetime access. ₹599." },
+      { property: "og:description", content: "Where SaaS + AI founders actually ship. Lifetime access. ₹1,599." },
     ],
   }),
   component: LandingPage,
@@ -37,7 +37,7 @@ function Ticker() {
   const items = [
     "SHIPPING > TALKING",
     "★ 420+ FOUNDERS ONLINE",
-    "₹599 LIFETIME · NO SUBS",
+    "₹1,599 LIFETIME · NO SUBS",
     "BUILD IN PUBLIC",
     "AI + SAAS + INDIE",
     "NO GURUS ALLOWED",
@@ -82,7 +82,7 @@ function Nav() {
             to="/auth"
             className="rounded-sm border-2 border-foreground bg-acid px-4 py-2 font-mono text-xs font-bold uppercase text-background shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal"
           >
-            join ₹599 →
+            join ₹1,599 →
           </Link>
         </div>
       </div>
@@ -104,7 +104,7 @@ function Hero() {
             live · v2.0
           </span>
           <span className="border-2 border-foreground bg-hot px-2 py-1 text-background">lifetime_deal</span>
-          <span className="border-2 border-foreground bg-gold px-2 py-1 text-background">₹599_forever</span>
+          <span className="border-2 border-foreground bg-gold px-2 py-1 text-background">₹1,599_forever</span>
           <span className="border-2 border-foreground bg-electric px-2 py-1 text-background">est.2026</span>
         </div>
 
@@ -175,7 +175,7 @@ function Stats() {
     { value: "420+", label: "founders_active", color: "bg-acid" },
     { value: "$12M+", label: "combined_arr", color: "bg-hot" },
     { value: "15+", label: "exits_shipped", color: "bg-gold" },
-    { value: "₹599", label: "lock-in_price", color: "bg-electric" },
+    { value: "₹1,599", label: "lock-in_price", color: "bg-electric" },
   ];
   return (
     <section className="mb-32 border-y-2 border-foreground bg-background">
@@ -278,7 +278,7 @@ function SuccessStories() {
 
 function Testimonials() {
   const quotes = [
-    { quote: "The single best ₹599 I've spent on my startup journey.", author: "Kabir · B2B SaaS" },
+    { quote: "The single best ₹1,599 I've spent on my startup journey.", author: "Kabir · B2B SaaS" },
     { quote: "Replaced three paid communities and a $1k mastermind.", author: "Ananya · AI tooling" },
     { quote: "I finally have peers who actually ship.", author: "Devansh · Indie hacker" },
   ];
@@ -318,7 +318,7 @@ function Pricing() {
           <div className="font-mono text-xs font-bold uppercase tracking-widest">// pricing_v1</div>
           <h2 className="mt-2 font-display text-5xl font-bold leading-none md:text-6xl">the no-brainer deal.</h2>
           <div className="mt-8 flex flex-wrap items-end gap-4">
-            <div className="font-display text-7xl font-bold leading-none md:text-8xl">₹599</div>
+            <div className="font-display text-7xl font-bold leading-none md:text-8xl">₹1,599</div>
             <div className="font-mono text-sm uppercase tracking-widest">
               /lifetime<br />
               <span className="opacity-70">↑ ₹2,999 @ 500 members</span>
@@ -356,7 +356,7 @@ function Pricing() {
 
 function FAQ() {
   const faqs = [
-    { q: "What do I get for ₹599?", a: "Permanent access to the community, resource library, founder directory, events, and all future features. No recurring charges, ever." },
+    { q: "What do I get for ₹1,599?", a: "Permanent access to the community, resource library, founder directory, events, and all future features. No recurring charges, ever." },
     { q: "Who is this for?", a: "SaaS founders, AI startup builders, indie hackers, technical and non-technical founders, and investors. Whether you're at $0 or $10k MRR." },
     { q: "Why is it so cheap?", a: "We're building the foundation. Early founders get the best price and help shape the community. Price doubles at 500 members." },
     { q: "What happens after I pay?", a: "Your account is instantly activated. You get immediate access to the community feed, resources, and member directory." },
@@ -407,7 +407,7 @@ function CTA() {
             <span className="bg-acid text-background px-2 -skew-x-6 inline-block">start shipping.</span>
           </h2>
           <p className="mt-6 max-w-2xl font-medium opacity-80">
-            Next 100 founders lock in ₹599 lifetime. After that: ₹2,999 forever.
+            Next 100 founders lock in ₹1,599 lifetime. After that: ₹2,999 forever.
           </p>
           <Link
             to="/auth"

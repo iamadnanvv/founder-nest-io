@@ -21,8 +21,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { createHmac } from "crypto";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-/** ₹599 lifetime access, expressed in paise (Razorpay's unit). */
-const AMOUNT_PAISE = 59900;
+/** ₹1,599 lifetime access, expressed in paise (Razorpay's unit). */
+const AMOUNT_PAISE = 159900;
 const CURRENCY = "INR";
 
 

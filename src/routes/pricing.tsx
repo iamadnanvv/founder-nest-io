@@ -149,7 +149,7 @@ function PricingPage() {
 
         <div className="rounded-2xl border border-border bg-card p-10 shadow-2xl">
           <div className="flex items-baseline justify-center gap-2">
-            <span className="font-display text-6xl text-gold">₹599</span>
+            <span className="font-display text-6xl text-gold">₹1,599</span>
             <span className="text-sm text-muted-foreground">one-time</span>
           </div>
 
@@ -172,7 +172,7 @@ function PricingPage() {
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Opening checkout…
               </>
             ) : (
-              "Get lifetime access — ₹599"
+              "Get lifetime access — ₹1,599"
             )}
           </Button>
 
@@ -193,7 +193,7 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Lifetime access to FounderHuntCommunity for a single ₹599 payment.",
+          "Lifetime access to FounderHuntCommunity for a single ₹1,599 payment.",
       },
     ],
   }),
