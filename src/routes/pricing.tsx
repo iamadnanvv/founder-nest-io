@@ -18,6 +18,9 @@ declare global {
 
 const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 
+/** Hosted Razorpay payment link for ₹1,599 lifetime access. */
+const PAYMENT_LINK = "https://razorpay.com/payment-link/plink_TIvxE12DZ3a2us";
+
 function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
@@ -149,7 +152,7 @@ function PricingPage() {
 
         <div className="rounded-2xl border border-border bg-card p-10 shadow-2xl">
           <div className="flex items-baseline justify-center gap-2">
-            <span className="font-display text-6xl text-gold">₹599</span>
+            <span className="font-display text-6xl text-gold">₹1,599</span>
             <span className="text-sm text-muted-foreground">one-time</span>
           </div>
 
@@ -162,17 +165,27 @@ function PricingPage() {
             ))}
           </ul>
 
+          <a
+            href={PAYMENT_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-10 flex h-12 w-full items-center justify-center rounded-md bg-gold font-medium text-background transition-colors hover:bg-gold/90"
+          >
+            Get lifetime access — ₹1,599
+          </a>
+
           <Button
+            variant="outline"
             onClick={handlePay}
             disabled={loading}
-            className="mt-10 h-12 w-full bg-gold text-background hover:bg-gold/90"
+            className="mt-3 h-11 w-full"
           >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Opening checkout…
               </>
             ) : (
-              "Get lifetime access — ₹599"
+              "Pay in-app (instant access)"
             )}
           </Button>
 
@@ -193,7 +206,7 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Lifetime access to FounderHuntCommunity for a single ₹599 payment.",
+          "Lifetime access to FounderHuntCommunity for a single ₹1,599 payment.",
       },
     ],
   }),

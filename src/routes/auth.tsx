@@ -177,7 +177,7 @@ function AuthPage() {
           </p>
         </div>
         <div className="text-xs uppercase tracking-widest text-muted-foreground">
-          ₹599 · Lifetime access · No subscriptions
+          ₹1,599 · Lifetime access · No subscriptions
         </div>
       </div>
 
