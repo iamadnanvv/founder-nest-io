@@ -18,6 +18,9 @@ declare global {
 
 const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 
+/** Hosted Razorpay payment link for ₹1,599 lifetime access. */
+const PAYMENT_LINK = "https://razorpay.com/payment-link/plink_TIvxE12DZ3a2us";
+
 function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
