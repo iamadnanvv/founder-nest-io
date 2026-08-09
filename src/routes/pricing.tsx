@@ -162,17 +162,27 @@ function PricingPage() {
             ))}
           </ul>
 
+          <a
+            href={PAYMENT_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-10 flex h-12 w-full items-center justify-center rounded-md bg-gold font-medium text-background transition-colors hover:bg-gold/90"
+          >
+            Get lifetime access — ₹1,599
+          </a>
+
           <Button
+            variant="outline"
             onClick={handlePay}
             disabled={loading}
-            className="mt-10 h-12 w-full bg-gold text-background hover:bg-gold/90"
+            className="mt-3 h-11 w-full"
           >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Opening checkout…
               </>
             ) : (
-              "Get lifetime access — ₹1,599"
+              "Pay in-app (instant access)"
             )}
           </Button>
 
