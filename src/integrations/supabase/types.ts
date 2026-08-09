@@ -504,6 +504,7 @@ export type Database = {
           linkedin_url: string | null
           location: string | null
           looking_for: string | null
+          paid_at: string | null
           profile_image: string | null
           skills: string[] | null
           startup_name: string | null
@@ -524,6 +525,7 @@ export type Database = {
           linkedin_url?: string | null
           location?: string | null
           looking_for?: string | null
+          paid_at?: string | null
           profile_image?: string | null
           skills?: string[] | null
           startup_name?: string | null
@@ -544,6 +546,7 @@ export type Database = {
           linkedin_url?: string | null
           location?: string | null
           looking_for?: string | null
+          paid_at?: string | null
           profile_image?: string | null
           skills?: string[] | null
           startup_name?: string | null
@@ -758,6 +761,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_premium_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

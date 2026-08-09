@@ -57,14 +57,24 @@ function PricingPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
+  /** Whether the signed-in member already has lifetime access. */
+  const [isPaid, setIsPaid] = useState(false);
 
   useEffect(() => {
     loadRazorpay();
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       setEmail(data.user?.email ?? null);
       setName(
         (data.user?.user_metadata?.full_name as string | undefined) ?? null,
       );
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_paid")
+          .eq("id", data.user.id)
+          .maybeSingle();
+        setIsPaid(!!profile?.is_paid);
+      }
     });
   }, []);
 
@@ -149,6 +159,14 @@ function PricingPage() {
             No subscriptions. No upsells. Join the founder community for life.
           </p>
         </div>
+
+        {email && !isPaid ? (
+          <div className="mb-6 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm">
+            <strong className="text-gold">Your account is ready.</strong>{" "}
+            Complete the one-time ₹1,599 payment to unlock onboarding, the feed,
+            founder discovery, messaging and every other member feature.
+          </div>
+        ) : null}
 
         <div className="rounded-2xl border border-border bg-card p-10 shadow-2xl">
           <div className="flex items-baseline justify-center gap-2">

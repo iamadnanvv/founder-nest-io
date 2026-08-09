@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Shield, Trash2, Pin, Lock } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { setMemberPaidStatus } from "@/lib/admin-access.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin · founder/hunt" }] }),
@@ -59,6 +61,7 @@ function AdminPage() {
 
 function UsersTab() {
   const qc = useQueryClient();
+  const setPaid = useServerFn(setMemberPaidStatus);
   const { data } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
@@ -80,6 +83,16 @@ function UsersTab() {
     await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", "admin");
     qc.invalidateQueries({ queryKey: ["admin-users"] });
   };
+  /** Manually activate/deactivate lifetime access (e.g. hosted payment-link payers). */
+  const togglePaid = async (uid: string, isPaid: boolean) => {
+    try {
+      await setPaid({ data: { userId: uid, isPaid } });
+      toast.success(isPaid ? "Access activated" : "Access revoked");
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to update access");
+    }
+  };
 
   return (
     <div className="border-2 border-foreground bg-surface">
@@ -100,6 +113,7 @@ function UsersTab() {
                 ) : (
                   <button onClick={() => grantAdmin(u.id)} className="border-2 border-foreground bg-background px-2 py-1 font-mono text-[10px] uppercase hover:bg-acid hover:text-background">Grant admin</button>
                 )}
+                <button onClick={() => togglePaid(u.id, !u.is_paid)} className="ml-2 border-2 border-foreground bg-background px-2 py-1 font-mono text-[10px] uppercase hover:bg-electric hover:text-background">{u.is_paid ? "Revoke access" : "Mark paid"}</button>
               </td>
             </tr>
           ))}

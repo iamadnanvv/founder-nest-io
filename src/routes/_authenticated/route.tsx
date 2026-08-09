@@ -24,6 +24,14 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
+
+    // Premium gate: only members with a verified ₹1,599 payment (or admins)
+    // may reach onboarding and the full platform. Everyone else goes to pricing.
+    const { data: premium } = await supabase.rpc("has_premium_access", {
+      _user_id: data.user.id,
+    });
+    if (!premium) throw redirect({ to: "/pricing" });
+
     return { user: data.user };
   },
   component: AuthenticatedLayout,
