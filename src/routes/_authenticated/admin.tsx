@@ -80,6 +80,16 @@ function UsersTab() {
     await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", "admin");
     qc.invalidateQueries({ queryKey: ["admin-users"] });
   };
+  /** Manually activate/deactivate lifetime access (e.g. hosted payment-link payers). */
+  const togglePaid = async (uid: string, isPaid: boolean) => {
+    try {
+      await setPaid({ data: { userId: uid, isPaid } });
+      toast.success(isPaid ? "Access activated" : "Access revoked");
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to update access");
+    }
+  };
 
   return (
     <div className="border-2 border-foreground bg-surface">
