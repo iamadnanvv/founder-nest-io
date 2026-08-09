@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Payments smoke", () => {
-  test("pricing page renders ₹599 lifetime CTA", async ({ page }) => {
+  test("pricing page renders ₹1,599 lifetime CTA", async ({ page }) => {
     await page.goto("/pricing");
     await expect(page.getByRole("heading", { name: /lifetime access/i })).toBeVisible();
-    await expect(page.getByText(/₹599/)).toBeVisible();
-    await expect(page.getByRole("button", { name: /get lifetime access/i })).toBeVisible();
+    await expect(page.getByText(/₹1,599/)).toBeVisible();
+    await expect(page.getByRole("link", { name: /get lifetime access/i })).toBeVisible();
   });
 
   test("Razorpay checkout script loads on /pricing", async ({ page }) => {
@@ -19,7 +19,7 @@ test.describe("Payments smoke", () => {
 
   test("clicking pay without auth redirects to /auth", async ({ page }) => {
     await page.goto("/pricing");
-    await page.getByRole("button", { name: /get lifetime access/i }).click();
+    await page.getByRole("button", { name: /pay in-app/i }).click();
     await page.waitForURL(/\/auth/, { timeout: 10_000 });
     expect(page.url()).toMatch(/\/auth/);
   });
