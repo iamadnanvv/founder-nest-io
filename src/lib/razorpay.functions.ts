@@ -114,7 +114,7 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
 
     await supabaseAdmin
       .from("profiles")
-      .update({ is_paid: true })
+      .update({ is_paid: true, paid_at: new Date().toISOString() })
       .eq("id", context.userId);
 
     return { ok: true };
