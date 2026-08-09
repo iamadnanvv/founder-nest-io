@@ -57,14 +57,24 @@ function PricingPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
+  /** Whether the signed-in member already has lifetime access. */
+  const [isPaid, setIsPaid] = useState(false);
 
   useEffect(() => {
     loadRazorpay();
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       setEmail(data.user?.email ?? null);
       setName(
         (data.user?.user_metadata?.full_name as string | undefined) ?? null,
       );
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_paid")
+          .eq("id", data.user.id)
+          .maybeSingle();
+        setIsPaid(!!profile?.is_paid);
+      }
     });
   }, []);
 
