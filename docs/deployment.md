@@ -48,3 +48,19 @@ migration.
 - `GET /` should return 200 with the landing page HTML.
 - `GET /pricing` should return 200 and include the Razorpay script URL.
 - `GET /dashboard` (unauthenticated) should client-redirect to `/auth`.
+
+## Vercel
+
+The build auto-targets Vercel when the `VERCEL` env var is present
+(`vite.config.ts` pins Nitro's `vercel` preset), emitting `.vercel/output`.
+`vercel.json` sets framework: null, `npm run build`, output `.vercel/output`.
+
+Required Vercel environment variables:
+
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`
+- `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (server functions / admin client)
+- `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`
+- `TELEGRAM_BOT_TOKEN` (if the bot is used)
+
+Missing server env vars are the most common cause of a build that succeeds
+but 500s at runtime.
