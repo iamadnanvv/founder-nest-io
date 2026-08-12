@@ -27,9 +27,17 @@ export const Route = createFileRoute("/_authenticated")({
 
     // Premium gate: only members with a verified ₹1,599 payment (or admins)
     // may reach onboarding and the full platform. Everyone else goes to pricing.
-    const { data: premium } = await supabase.rpc("has_premium_access", {
-      _user_id: data.user.id,
-    });
+    // Read own rows directly — RLS scopes both queries to the signed-in user.
+    const [{ data: profile }, { data: adminRole }] = await Promise.all([
+      supabase.from("profiles").select("is_paid").eq("id", data.user.id).maybeSingle(),
+      supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .eq("role", "admin")
+        .maybeSingle(),
+    ]);
+    const premium = !!profile?.is_paid || !!adminRole;
     if (!premium) throw redirect({ to: "/pricing" });
 
     return { user: data.user };
