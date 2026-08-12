@@ -7,13 +7,20 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 
+// On Vercel, pin Nitro to the `vercel` preset so the build emits
+// .vercel/output (Build Output API v3). Inside Lovable the preset is
+// always forced to Cloudflare, so this only affects external CI.
+const isVercel = !!process.env.VERCEL;
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  ...(isVercel ? { nitro: { preset: "vercel" } } : {}),
   vite: {
     plugins: [mcpPlugin()],
   },
 });
+
