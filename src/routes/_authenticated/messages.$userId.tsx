@@ -84,6 +84,23 @@ function ChatPage() {
     refetch();
   };
 
+  // Guard: DMing yourself is never valid — send the member back to the inbox.
+  if (me && me === otherId) {
+    return (
+      <div className="mx-auto max-w-lg p-10 text-center">
+        <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          That&apos;s you — pick another founder to message.
+        </p>
+        <Link
+          to="/members"
+          className="mt-4 inline-block border-2 border-foreground bg-acid px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-background shadow-brutal-sm"
+        >
+          Browse members
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto flex h-[calc(100vh-4rem)] max-w-3xl flex-col lg:h-screen">
       <header className="flex items-center gap-3 border-b-2 border-foreground bg-surface p-4">
