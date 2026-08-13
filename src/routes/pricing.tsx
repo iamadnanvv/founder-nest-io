@@ -5,10 +5,7 @@ import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import {
-  createRazorpayOrder,
-  verifyRazorpayPayment,
-} from "@/lib/razorpay.functions";
+import { createRazorpayOrder, verifyRazorpayPayment } from "@/lib/razorpay.functions";
 
 declare global {
   interface Window {
@@ -25,9 +22,7 @@ function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
     if (window.Razorpay) return resolve(true);
-    const existing = document.querySelector<HTMLScriptElement>(
-      `script[src="${RAZORPAY_SCRIPT}"]`,
-    );
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${RAZORPAY_SCRIPT}"]`);
     if (existing) {
       existing.addEventListener("load", () => resolve(true));
       existing.addEventListener("error", () => resolve(false));
@@ -205,8 +200,8 @@ function PricingPage() {
         {email && isPaid ? (
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm">
             <span>
-              <strong className="text-gold">You already have lifetime access.</strong>{" "}
-              Signed in as {email}.
+              <strong className="text-gold">You already have lifetime access.</strong> Signed in as{" "}
+              {email}.
             </span>
             <Link
               to="/dashboard"
@@ -219,9 +214,9 @@ function PricingPage() {
 
         {email && !isPaid ? (
           <div className="mb-6 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm">
-            <strong className="text-gold">Your account is ready.</strong>{" "}
-            Complete the one-time ₹1,599 payment to unlock onboarding, the feed,
-            founder discovery, messaging and every other member feature.
+            <strong className="text-gold">Your account is ready.</strong> Complete the one-time
+            ₹1,599 payment to unlock onboarding, the feed, founder discovery, messaging and every
+            other member feature.
             <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
               <span>Signed in as {email}</span>
               <button
@@ -281,8 +276,8 @@ function PricingPage() {
             disabled={checking}
             className="mt-3 flex h-10 w-full items-center justify-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-gold disabled:opacity-60"
           >
-            {checking ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
-            I already paid — refresh my access
+            {checking ? <Loader2 className="h-3 w-3 animate-spin" /> : null}I already paid — refresh
+            my access
           </button>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
@@ -301,8 +296,7 @@ export const Route = createFileRoute("/pricing")({
       { title: "Pricing — FounderHuntCommunity" },
       {
         name: "description",
-        content:
-          "Lifetime access to FounderHuntCommunity for a single ₹1,599 payment.",
+        content: "Lifetime access to FounderHuntCommunity for a single ₹1,599 payment.",
       },
     ],
   }),
