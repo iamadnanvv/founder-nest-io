@@ -202,11 +202,36 @@ function PricingPage() {
           </p>
         </div>
 
+        {email && isPaid ? (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm">
+            <span>
+              <strong className="text-gold">You already have lifetime access.</strong>{" "}
+              Signed in as {email}.
+            </span>
+            <Link
+              to="/dashboard"
+              className="rounded-md bg-gold px-4 py-2 text-xs font-semibold uppercase tracking-widest text-background"
+            >
+              Go to dashboard
+            </Link>
+          </div>
+        ) : null}
+
         {email && !isPaid ? (
           <div className="mb-6 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm">
             <strong className="text-gold">Your account is ready.</strong>{" "}
             Complete the one-time ₹1,599 payment to unlock onboarding, the feed,
             founder discovery, messaging and every other member feature.
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+              <span>Signed in as {email}</span>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="underline hover:text-foreground"
+              >
+                Use another account
+              </button>
+            </div>
           </div>
         ) : null}
 
