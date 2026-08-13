@@ -107,8 +107,8 @@ function DashboardPage() {
               <p className="text-sm text-muted-foreground">No posts yet. Be the first to share what you're building.</p>
             ) : (
               posts!.map((p) => (
-                <div key={p.id} className="rounded-xl border border-border bg-background p-4">
-                  <div className="mb-2 text-xs uppercase tracking-widest text-gold">{p.category.replace("_", " ")}</div>
+                <div key={p.id} className="border-2 border-foreground bg-background p-4">
+                  <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-widest text-electric">{p.category.replace(/_/g, " ")}</div>
                   <p className="text-sm text-foreground">{p.content.slice(0, 180)}{p.content.length > 180 ? "…" : ""}</p>
                 </div>
               ))
@@ -116,15 +116,15 @@ function DashboardPage() {
           </div>
         </section>
 
-        <section className="rounded-3xl border border-border bg-surface p-6">
-          <h2 className="mb-4 font-display text-xl font-bold text-foreground">Upcoming Events</h2>
+        <section className="border-2 border-foreground bg-surface p-6">
+          <h2 className="mb-4 font-display text-xl font-black uppercase tracking-tight text-foreground">Upcoming Events</h2>
           <div className="space-y-3">
             {(events ?? []).length === 0 ? (
               <p className="text-sm text-muted-foreground">No events scheduled.</p>
             ) : (
               events!.map((e) => (
-                <div key={e.id} className="rounded-xl border border-border bg-background p-4">
-                  <div className="text-xs uppercase tracking-widest text-gold">
+                <div key={e.id} className="border-2 border-foreground bg-background p-4">
+                  <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-electric">
                     {new Date(e.event_date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
                   </div>
                   <h3 className="mt-1 font-semibold text-foreground">{e.title}</h3>
@@ -141,12 +141,12 @@ function DashboardPage() {
 
 function StatCard({ icon: Icon, label, value }: { icon: typeof Calendar; label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
-      <div className="mb-3 grid size-10 place-items-center rounded-xl bg-gold-soft text-gold">
+    <div className="border-2 border-foreground bg-surface p-5">
+      <div className="mb-3 grid size-10 place-items-center border-2 border-foreground bg-electric text-background">
         <Icon className="size-5" />
       </div>
-      <div className="font-display text-2xl font-bold text-foreground">{value}</div>
-      <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="font-display text-2xl font-black text-foreground">{value}</div>
+      <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
     </div>
   );
 }
