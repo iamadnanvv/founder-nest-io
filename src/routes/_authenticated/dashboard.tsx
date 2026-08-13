@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, MessageSquare, Rocket, TrendingUp, Megaphone, Users } from "lucide-react";
@@ -95,10 +95,12 @@ function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <section className="lg:col-span-2 rounded-3xl border border-border bg-surface p-6">
+        <section className="lg:col-span-2 border-2 border-foreground bg-surface p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold text-foreground">Recent Discussions</h2>
-            <a href="/feed" className="text-xs uppercase tracking-widest text-gold">View all</a>
+            <h2 className="font-display text-xl font-black uppercase tracking-tight text-foreground">Recent Discussions</h2>
+            <Link to="/feed" className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground hover:bg-acid hover:text-background">
+              View all
+            </Link>
           </div>
           <div className="space-y-3">
             {(posts ?? []).length === 0 ? (
