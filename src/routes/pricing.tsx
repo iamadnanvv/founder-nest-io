@@ -59,24 +59,66 @@ function PricingPage() {
   const [name, setName] = useState<string | null>(null);
   /** Whether the signed-in member already has lifetime access. */
   const [isPaid, setIsPaid] = useState(false);
+  /** True while re-checking access after an external (hosted link) payment. */
+  const [checking, setChecking] = useState(false);
+
+  /**
+   * Reads the signed-in member's payment flag. Returns null when signed out.
+   * Used on mount, on tab focus (people come back from the hosted Razorpay
+   * link in another tab) and from the manual "I already paid" button.
+   */
+  async function readAccess(): Promise<boolean | null> {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      setEmail(null);
+      return null;
+    }
+    setEmail(data.user.email ?? null);
+    setName((data.user.user_metadata?.full_name as string | undefined) ?? null);
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_paid")
+      .eq("id", data.user.id)
+      .maybeSingle();
+    const paid = !!profile?.is_paid;
+    setIsPaid(paid);
+    return paid;
+  }
 
   useEffect(() => {
     loadRazorpay();
-    supabase.auth.getUser().then(async ({ data }) => {
-      setEmail(data.user?.email ?? null);
-      setName(
-        (data.user?.user_metadata?.full_name as string | undefined) ?? null,
-      );
-      if (data.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_paid")
-          .eq("id", data.user.id)
-          .maybeSingle();
-        setIsPaid(!!profile?.is_paid);
-      }
-    });
+    void readAccess();
+    const onFocus = () => void readAccess();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /** Manual re-check for members who paid through the hosted link. */
+  async function handleRefreshAccess() {
+    setChecking(true);
+    try {
+      const paid = await readAccess();
+      if (paid === null) {
+        toast.error("Please sign in first");
+        navigate({ to: "/auth" });
+      } else if (paid) {
+        toast.success("Access unlocked. Welcome aboard!");
+        navigate({ to: "/dashboard" });
+      } else {
+        toast.info(
+          "Payment not confirmed yet. Hosted-link payments can take a few minutes — try again shortly.",
+        );
+      }
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   async function handlePay() {
     setLoading(true);
