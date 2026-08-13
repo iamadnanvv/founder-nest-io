@@ -250,29 +250,40 @@ function PricingPage() {
             ))}
           </ul>
 
-          <a
-            href={PAYMENT_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-10 flex h-12 w-full items-center justify-center rounded-md bg-gold font-medium text-background transition-colors hover:bg-gold/90"
-          >
-            Get lifetime access — ₹1,599
-          </a>
-
+          {/* In-app checkout is primary: the payment is verified server-side and
+              access unlocks instantly. The hosted link is the fallback. */}
           <Button
-            variant="outline"
             onClick={handlePay}
             disabled={loading}
-            className="mt-3 h-11 w-full"
+            className="mt-10 h-12 w-full bg-gold font-medium text-background hover:bg-gold/90"
           >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Opening checkout…
               </>
             ) : (
-              "Pay in-app (instant access)"
+              "Get lifetime access — ₹1,599"
             )}
           </Button>
+
+          <a
+            href={PAYMENT_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex h-11 w-full items-center justify-center rounded-md border border-border text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Pay via Razorpay payment link instead
+          </a>
+
+          <button
+            type="button"
+            onClick={handleRefreshAccess}
+            disabled={checking}
+            className="mt-3 flex h-10 w-full items-center justify-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-gold disabled:opacity-60"
+          >
+            {checking ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+            I already paid — refresh my access
+          </button>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
             Secure payments by Razorpay. UPI, cards, net banking & wallets.
