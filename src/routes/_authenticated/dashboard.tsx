@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, MessageSquare, Rocket, TrendingUp, Megaphone, Users } from "lucide-react";
@@ -17,7 +17,11 @@ function DashboardPage() {
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return null;
-      const { data } = await supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle();
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", u.user.id)
+        .maybeSingle();
       return data;
     },
   });
@@ -54,12 +58,16 @@ function DashboardPage() {
         <h1 className="mt-2 font-display text-4xl font-bold text-foreground">
           {profile?.full_name || "Founder"}
         </h1>
-        <p className="mt-2 text-muted-foreground">Here's what's happening in your community today.</p>
+        <p className="mt-2 text-muted-foreground">
+          Here's what's happening in your community today.
+        </p>
       </header>
 
       <section className="grid gap-4 border-2 border-foreground bg-acid p-5 shadow-brutal-sm sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
-          <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-background/80">Join the conversation</p>
+          <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-background/80">
+            Join the conversation
+          </p>
           <h2 className="mt-1 font-display text-2xl font-black uppercase tracking-tight text-background">
             FounderHunt on WhatsApp
           </h2>
@@ -91,39 +99,62 @@ function DashboardPage() {
         <StatCard icon={MessageSquare} label="Discussions" value={String(posts?.length ?? 0)} />
         <StatCard icon={Calendar} label="Upcoming Events" value={String(events?.length ?? 0)} />
         <StatCard icon={Rocket} label="Your Startup" value={profile?.startup_name ? "Live" : "—"} />
-        <StatCard icon={TrendingUp} label="Membership" value={profile?.is_paid ? "Active" : "Pending"} />
+        <StatCard
+          icon={TrendingUp}
+          label="Membership"
+          value={profile?.is_paid ? "Active" : "Pending"}
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <section className="lg:col-span-2 rounded-3xl border border-border bg-surface p-6">
+        <section className="lg:col-span-2 border-2 border-foreground bg-surface p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-xl font-bold text-foreground">Recent Discussions</h2>
-            <a href="/feed" className="text-xs uppercase tracking-widest text-gold">View all</a>
+            <h2 className="font-display text-xl font-black uppercase tracking-tight text-foreground">
+              Recent Discussions
+            </h2>
+            <Link
+              to="/feed"
+              className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground hover:bg-acid hover:text-background"
+            >
+              View all
+            </Link>
           </div>
           <div className="space-y-3">
             {(posts ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">No posts yet. Be the first to share what you're building.</p>
+              <p className="text-sm text-muted-foreground">
+                No posts yet. Be the first to share what you're building.
+              </p>
             ) : (
               posts!.map((p) => (
-                <div key={p.id} className="rounded-xl border border-border bg-background p-4">
-                  <div className="mb-2 text-xs uppercase tracking-widest text-gold">{p.category.replace("_", " ")}</div>
-                  <p className="text-sm text-foreground">{p.content.slice(0, 180)}{p.content.length > 180 ? "…" : ""}</p>
+                <div key={p.id} className="border-2 border-foreground bg-background p-4">
+                  <div className="mb-2 font-mono text-[10px] font-bold uppercase tracking-widest text-electric">
+                    {p.category.replace(/_/g, " ")}
+                  </div>
+                  <p className="text-sm text-foreground">
+                    {p.content.slice(0, 180)}
+                    {p.content.length > 180 ? "…" : ""}
+                  </p>
                 </div>
               ))
             )}
           </div>
         </section>
 
-        <section className="rounded-3xl border border-border bg-surface p-6">
-          <h2 className="mb-4 font-display text-xl font-bold text-foreground">Upcoming Events</h2>
+        <section className="border-2 border-foreground bg-surface p-6">
+          <h2 className="mb-4 font-display text-xl font-black uppercase tracking-tight text-foreground">
+            Upcoming Events
+          </h2>
           <div className="space-y-3">
             {(events ?? []).length === 0 ? (
               <p className="text-sm text-muted-foreground">No events scheduled.</p>
             ) : (
               events!.map((e) => (
-                <div key={e.id} className="rounded-xl border border-border bg-background p-4">
-                  <div className="text-xs uppercase tracking-widest text-gold">
-                    {new Date(e.event_date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
+                <div key={e.id} className="border-2 border-foreground bg-background p-4">
+                  <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-electric">
+                    {new Date(e.event_date).toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "short",
+                    })}
                   </div>
                   <h3 className="mt-1 font-semibold text-foreground">{e.title}</h3>
                   {e.speaker && <p className="text-xs text-muted-foreground">with {e.speaker}</p>}
@@ -137,14 +168,24 @@ function DashboardPage() {
   );
 }
 
-function StatCard({ icon: Icon, label, value }: { icon: typeof Calendar; label: string; value: string }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Calendar;
+  label: string;
+  value: string;
+}) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
-      <div className="mb-3 grid size-10 place-items-center rounded-xl bg-gold-soft text-gold">
+    <div className="border-2 border-foreground bg-surface p-5">
+      <div className="mb-3 grid size-10 place-items-center border-2 border-foreground bg-electric text-background">
         <Icon className="size-5" />
       </div>
-      <div className="font-display text-2xl font-bold text-foreground">{value}</div>
-      <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="font-display text-2xl font-black text-foreground">{value}</div>
+      <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </div>
     </div>
   );
 }

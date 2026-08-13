@@ -5,10 +5,7 @@ import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import {
-  createRazorpayOrder,
-  verifyRazorpayPayment,
-} from "@/lib/razorpay.functions";
+import { createRazorpayOrder, verifyRazorpayPayment } from "@/lib/razorpay.functions";
 
 declare global {
   interface Window {
@@ -25,9 +22,7 @@ function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
     if (window.Razorpay) return resolve(true);
-    const existing = document.querySelector<HTMLScriptElement>(
-      `script[src="${RAZORPAY_SCRIPT}"]`,
-    );
+    const existing = document.querySelector<HTMLScriptElement>(`script[src="${RAZORPAY_SCRIPT}"]`);
     if (existing) {
       existing.addEventListener("load", () => resolve(true));
       existing.addEventListener("error", () => resolve(false));
@@ -59,24 +54,66 @@ function PricingPage() {
   const [name, setName] = useState<string | null>(null);
   /** Whether the signed-in member already has lifetime access. */
   const [isPaid, setIsPaid] = useState(false);
+  /** True while re-checking access after an external (hosted link) payment. */
+  const [checking, setChecking] = useState(false);
+
+  /**
+   * Reads the signed-in member's payment flag. Returns null when signed out.
+   * Used on mount, on tab focus (people come back from the hosted Razorpay
+   * link in another tab) and from the manual "I already paid" button.
+   */
+  async function readAccess(): Promise<boolean | null> {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      setEmail(null);
+      return null;
+    }
+    setEmail(data.user.email ?? null);
+    setName((data.user.user_metadata?.full_name as string | undefined) ?? null);
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_paid")
+      .eq("id", data.user.id)
+      .maybeSingle();
+    const paid = !!profile?.is_paid;
+    setIsPaid(paid);
+    return paid;
+  }
 
   useEffect(() => {
     loadRazorpay();
-    supabase.auth.getUser().then(async ({ data }) => {
-      setEmail(data.user?.email ?? null);
-      setName(
-        (data.user?.user_metadata?.full_name as string | undefined) ?? null,
-      );
-      if (data.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_paid")
-          .eq("id", data.user.id)
-          .maybeSingle();
-        setIsPaid(!!profile?.is_paid);
-      }
-    });
+    void readAccess();
+    const onFocus = () => void readAccess();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /** Manual re-check for members who paid through the hosted link. */
+  async function handleRefreshAccess() {
+    setChecking(true);
+    try {
+      const paid = await readAccess();
+      if (paid === null) {
+        toast.error("Please sign in first");
+        navigate({ to: "/auth" });
+      } else if (paid) {
+        toast.success("Access unlocked. Welcome aboard!");
+        navigate({ to: "/dashboard" });
+      } else {
+        toast.info(
+          "Payment not confirmed yet. Hosted-link payments can take a few minutes — try again shortly.",
+        );
+      }
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
 
   async function handlePay() {
     setLoading(true);
@@ -160,11 +197,36 @@ function PricingPage() {
           </p>
         </div>
 
+        {email && isPaid ? (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm">
+            <span>
+              <strong className="text-gold">You already have lifetime access.</strong> Signed in as{" "}
+              {email}.
+            </span>
+            <Link
+              to="/dashboard"
+              className="rounded-md bg-gold px-4 py-2 text-xs font-semibold uppercase tracking-widest text-background"
+            >
+              Go to dashboard
+            </Link>
+          </div>
+        ) : null}
+
         {email && !isPaid ? (
           <div className="mb-6 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm">
-            <strong className="text-gold">Your account is ready.</strong>{" "}
-            Complete the one-time ₹1,599 payment to unlock onboarding, the feed,
-            founder discovery, messaging and every other member feature.
+            <strong className="text-gold">Your account is ready.</strong> Complete the one-time
+            ₹1,599 payment to unlock onboarding, the feed, founder discovery, messaging and every
+            other member feature.
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+              <span>Signed in as {email}</span>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="underline hover:text-foreground"
+              >
+                Use another account
+              </button>
+            </div>
           </div>
         ) : null}
 
@@ -183,29 +245,40 @@ function PricingPage() {
             ))}
           </ul>
 
-          <a
-            href={PAYMENT_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-10 flex h-12 w-full items-center justify-center rounded-md bg-gold font-medium text-background transition-colors hover:bg-gold/90"
-          >
-            Get lifetime access — ₹1,599
-          </a>
-
+          {/* In-app checkout is primary: the payment is verified server-side and
+              access unlocks instantly. The hosted link is the fallback. */}
           <Button
-            variant="outline"
             onClick={handlePay}
             disabled={loading}
-            className="mt-3 h-11 w-full"
+            className="mt-10 h-12 w-full bg-gold font-medium text-background hover:bg-gold/90"
           >
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Opening checkout…
               </>
             ) : (
-              "Pay in-app (instant access)"
+              "Get lifetime access — ₹1,599"
             )}
           </Button>
+
+          <a
+            href={PAYMENT_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 flex h-11 w-full items-center justify-center rounded-md border border-border text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Pay via Razorpay payment link instead
+          </a>
+
+          <button
+            type="button"
+            onClick={handleRefreshAccess}
+            disabled={checking}
+            className="mt-3 flex h-10 w-full items-center justify-center gap-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-gold disabled:opacity-60"
+          >
+            {checking ? <Loader2 className="h-3 w-3 animate-spin" /> : null}I already paid — refresh
+            my access
+          </button>
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
             Secure payments by Razorpay. UPI, cards, net banking & wallets.
@@ -223,8 +296,7 @@ export const Route = createFileRoute("/pricing")({
       { title: "Pricing — FounderHuntCommunity" },
       {
         name: "description",
-        content:
-          "Lifetime access to FounderHuntCommunity for a single ₹1,599 payment.",
+        content: "Lifetime access to FounderHuntCommunity for a single ₹1,599 payment.",
       },
     ],
   }),
