@@ -17,10 +17,18 @@ export default defineTool({
     const sb = supabaseForUser(ctx);
     const { data, error } = await sb
       .from("posts")
-      .insert({ content, category: category as never, image_url: image_url ?? null, user_id: ctx.getUserId()! })
+      .insert({
+        content,
+        category: category as never,
+        image_url: image_url ?? null,
+        user_id: ctx.getUserId()!,
+      })
       .select()
       .single();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    return { content: [{ type: "text", text: `Post created: ${data.id}` }], structuredContent: { post: data } };
+    return {
+      content: [{ type: "text", text: `Post created: ${data.id}` }],
+      structuredContent: { post: data },
+    };
   },
 });

@@ -53,7 +53,10 @@ function InboxPage() {
       }
       const ids = [...byOther.keys()];
       if (ids.length) {
-        const { data: profs } = await supabase.from("profiles").select("id, full_name").in("id", ids);
+        const { data: profs } = await supabase
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", ids);
         for (const p of profs ?? []) {
           const c = byOther.get(p.id);
           if (c) c.full_name = p.full_name;
@@ -69,21 +72,32 @@ function InboxPage() {
       .channel("inbox")
       .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, () => refetch())
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [userId, refetch]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-6 lg:p-10">
       <header>
-        <h1 className="font-display text-4xl font-black uppercase tracking-tight text-foreground">Messages</h1>
-        <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">Founder-to-founder DMs</p>
+        <h1 className="font-display text-4xl font-black uppercase tracking-tight text-foreground">
+          Messages
+        </h1>
+        <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          Founder-to-founder DMs
+        </p>
       </header>
 
       {(convos ?? []).length === 0 && (
         <div className="border-2 border-dashed border-foreground p-8 text-center">
           <Send className="mx-auto mb-3 size-8 text-muted-foreground" />
-          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">No conversations yet</p>
-          <Link to="/members" className="mt-3 inline-block border-2 border-foreground bg-acid px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-background shadow-brutal-sm">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            No conversations yet
+          </p>
+          <Link
+            to="/members"
+            className="mt-3 inline-block border-2 border-foreground bg-acid px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-widest text-background shadow-brutal-sm"
+          >
             Find members
           </Link>
         </div>
@@ -102,12 +116,20 @@ function InboxPage() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
-                <div className="truncate font-display font-bold text-foreground">{c.full_name ?? "Founder"}</div>
-                <div className="font-mono text-[10px] uppercase text-muted-foreground">{new Date(c.last_at).toLocaleDateString()}</div>
+                <div className="truncate font-display font-bold text-foreground">
+                  {c.full_name ?? "Founder"}
+                </div>
+                <div className="font-mono text-[10px] uppercase text-muted-foreground">
+                  {new Date(c.last_at).toLocaleDateString()}
+                </div>
               </div>
               <div className="truncate text-sm text-muted-foreground">{c.last_message}</div>
             </div>
-            {c.unread > 0 && <div className="grid size-6 place-items-center bg-hot font-mono text-[10px] font-bold text-background">{c.unread}</div>}
+            {c.unread > 0 && (
+              <div className="grid size-6 place-items-center bg-hot font-mono text-[10px] font-bold text-background">
+                {c.unread}
+              </div>
+            )}
           </Link>
         ))}
       </div>

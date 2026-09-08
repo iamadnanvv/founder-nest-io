@@ -27,7 +27,11 @@ export const getTelegramStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    const { data } = await supabase.from("telegram_links").select("*").eq("user_id", userId).maybeSingle();
+    const { data } = await supabase
+      .from("telegram_links")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
     return { linked: !!data, link: data };
   });
 

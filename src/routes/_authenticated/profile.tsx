@@ -23,15 +23,30 @@ function ProfilePage() {
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return null;
-      const { data } = await supabase.from("profiles").select("*").eq("id", u.user.id).maybeSingle();
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", u.user.id)
+        .maybeSingle();
       return data;
     },
   });
 
   const [form, setForm] = useState({
-    full_name: "", bio: "", startup_name: "", startup_website: "",
-    startup_stage: "", industry: "", linkedin_url: "", looking_for: "", funding_status: "",
-    location: "", founder_type: "", profile_image: "", skills: "", interests: "",
+    full_name: "",
+    bio: "",
+    startup_name: "",
+    startup_website: "",
+    startup_stage: "",
+    industry: "",
+    linkedin_url: "",
+    looking_for: "",
+    funding_status: "",
+    location: "",
+    founder_type: "",
+    profile_image: "",
+    skills: "",
+    interests: "",
   });
   const [saving, setSaving] = useState(false);
 
@@ -61,11 +76,18 @@ function ProfilePage() {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
     const toList = (v: string) => {
-      const list = v.split(",").map((s) => s.trim()).filter(Boolean).slice(0, 20);
+      const list = v
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .slice(0, 20);
       return list.length ? list : null;
     };
     const url = form.profile_image.trim();
-    if (url && !/^https?:\/\//i.test(url)) { toast.error("Photo URL must start with http(s)://"); return; }
+    if (url && !/^https?:\/\//i.test(url)) {
+      toast.error("Photo URL must start with http(s)://");
+      return;
+    }
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
@@ -77,7 +99,10 @@ function ProfilePage() {
       })
       .eq("id", u.user.id);
     setSaving(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Profile saved");
     qc.invalidateQueries({ queryKey: ["my-profile-edit"] });
     qc.invalidateQueries({ queryKey: ["my-profile"] });
@@ -88,29 +113,100 @@ function ProfilePage() {
     <div className="mx-auto max-w-3xl space-y-6 p-6 lg:p-10">
       <header>
         <h1 className="font-display text-3xl font-bold text-foreground">My Profile</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Help other founders find and connect with you.</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Help other founders find and connect with you.
+        </p>
       </header>
 
-      <form onSubmit={handleSave} className="space-y-5 rounded-3xl border border-border bg-surface p-6">
+      <form
+        onSubmit={handleSave}
+        className="space-y-5 rounded-3xl border border-border bg-surface p-6"
+      >
         <div className="grid gap-4 sm:grid-cols-2">
-          <Input label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} />
-          <Input label="LinkedIn URL" value={form.linkedin_url} onChange={(v) => setForm({ ...form, linkedin_url: v })} placeholder="https://linkedin.com/in/..." />
-          <Input label="Profile photo URL" value={form.profile_image} onChange={(v) => setForm({ ...form, profile_image: v })} placeholder="https://…" />
-          <Input label="Location" value={form.location} onChange={(v) => setForm({ ...form, location: v })} placeholder="Bengaluru, India" />
+          <Input
+            label="Full name"
+            value={form.full_name}
+            onChange={(v) => setForm({ ...form, full_name: v })}
+          />
+          <Input
+            label="LinkedIn URL"
+            value={form.linkedin_url}
+            onChange={(v) => setForm({ ...form, linkedin_url: v })}
+            placeholder="https://linkedin.com/in/..."
+          />
+          <Input
+            label="Profile photo URL"
+            value={form.profile_image}
+            onChange={(v) => setForm({ ...form, profile_image: v })}
+            placeholder="https://…"
+          />
+          <Input
+            label="Location"
+            value={form.location}
+            onChange={(v) => setForm({ ...form, location: v })}
+            placeholder="Bengaluru, India"
+          />
         </div>
         <Textarea label="Bio" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} />
         <div className="grid gap-4 sm:grid-cols-2">
-          <Input label="Founder type" value={form.founder_type} onChange={(v) => setForm({ ...form, founder_type: v })} placeholder="technical / business / design / investor" />
-          <Input label="Startup name" value={form.startup_name} onChange={(v) => setForm({ ...form, startup_name: v })} />
-          <Input label="Startup website" value={form.startup_website} onChange={(v) => setForm({ ...form, startup_website: v })} placeholder="https://" />
-          <Input label="Stage" value={form.startup_stage} onChange={(v) => setForm({ ...form, startup_stage: v })} placeholder="idea / mvp / launched / scaling" />
-          <Input label="Industry" value={form.industry} onChange={(v) => setForm({ ...form, industry: v })} />
-          <Input label="Funding status" value={form.funding_status} onChange={(v) => setForm({ ...form, funding_status: v })} placeholder="bootstrapped / pre-seed / seed…" />
-          <Input label="Looking for" value={form.looking_for} onChange={(v) => setForm({ ...form, looking_for: v })} placeholder="co-founder / advisors / customers…" />
-          <Input label="Skills (comma separated)" value={form.skills} onChange={(v) => setForm({ ...form, skills: v })} placeholder="react, growth, sales" />
-          <Input label="Interests (comma separated)" value={form.interests} onChange={(v) => setForm({ ...form, interests: v })} placeholder="ai, fintech, devtools" />
+          <Input
+            label="Founder type"
+            value={form.founder_type}
+            onChange={(v) => setForm({ ...form, founder_type: v })}
+            placeholder="technical / business / design / investor"
+          />
+          <Input
+            label="Startup name"
+            value={form.startup_name}
+            onChange={(v) => setForm({ ...form, startup_name: v })}
+          />
+          <Input
+            label="Startup website"
+            value={form.startup_website}
+            onChange={(v) => setForm({ ...form, startup_website: v })}
+            placeholder="https://"
+          />
+          <Input
+            label="Stage"
+            value={form.startup_stage}
+            onChange={(v) => setForm({ ...form, startup_stage: v })}
+            placeholder="idea / mvp / launched / scaling"
+          />
+          <Input
+            label="Industry"
+            value={form.industry}
+            onChange={(v) => setForm({ ...form, industry: v })}
+          />
+          <Input
+            label="Funding status"
+            value={form.funding_status}
+            onChange={(v) => setForm({ ...form, funding_status: v })}
+            placeholder="bootstrapped / pre-seed / seed…"
+          />
+          <Input
+            label="Looking for"
+            value={form.looking_for}
+            onChange={(v) => setForm({ ...form, looking_for: v })}
+            placeholder="co-founder / advisors / customers…"
+          />
+          <Input
+            label="Skills (comma separated)"
+            value={form.skills}
+            onChange={(v) => setForm({ ...form, skills: v })}
+            placeholder="react, growth, sales"
+          />
+          <Input
+            label="Interests (comma separated)"
+            value={form.interests}
+            onChange={(v) => setForm({ ...form, interests: v })}
+            placeholder="ai, fintech, devtools"
+          />
         </div>
-        <button type="submit" disabled={saving} className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60">
+        <button
+          type="submit"
+          disabled={saving}
+          className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-60"
+        >
           {saving ? "Saving…" : "Save profile"}
         </button>
       </form>
@@ -149,7 +245,10 @@ function TelegramCard() {
     qc.invalidateQueries({ queryKey: ["telegram-status"] });
   };
 
-  const togglePref = async (key: "notify_dm" | "notify_reply" | "notify_engagement" | "notify_events", value: boolean) => {
+  const togglePref = async (
+    key: "notify_dm" | "notify_reply" | "notify_engagement" | "notify_events",
+    value: boolean,
+  ) => {
     await savePrefs({ data: { [key]: value } as any });
     qc.invalidateQueries({ queryKey: ["telegram-status"] });
   };
@@ -162,19 +261,31 @@ function TelegramCard() {
       <header>
         <h2 className="font-display text-2xl font-bold text-foreground">Telegram Bot</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Get notifications, browse the feed, and post from Telegram. Open <a className="underline" href="https://t.me" target="_blank" rel="noopener noreferrer">your bot</a> and send <code className="rounded bg-background px-1">/start</code>.
+          Get notifications, browse the feed, and post from Telegram. Open{" "}
+          <a className="underline" href="https://t.me" target="_blank" rel="noopener noreferrer">
+            your bot
+          </a>{" "}
+          and send <code className="rounded bg-background px-1">/start</code>.
         </p>
       </header>
 
       {!linked ? (
         <div className="space-y-3">
-          <button onClick={handleGenerate} type="button" className="rounded-full bg-electric px-5 py-2 text-sm font-bold text-background">
+          <button
+            onClick={handleGenerate}
+            type="button"
+            className="rounded-full bg-electric px-5 py-2 text-sm font-bold text-background"
+          >
             Generate link code
           </button>
           {code && (
             <div className="rounded-2xl border-2 border-dashed border-foreground bg-background p-4">
-              <p className="text-xs uppercase tracking-widest text-muted-foreground">Send this in Telegram:</p>
-              <p className="mt-2 font-mono text-2xl font-black tracking-widest text-foreground">/link {code}</p>
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                Send this in Telegram:
+              </p>
+              <p className="mt-2 font-mono text-2xl font-black tracking-widest text-foreground">
+                /link {code}
+              </p>
               <p className="mt-2 text-xs text-muted-foreground">Expires in 15 minutes.</p>
             </div>
           )}
@@ -182,13 +293,32 @@ function TelegramCard() {
       ) : (
         <div className="space-y-4">
           <div className="rounded-2xl border border-border bg-background p-4 text-sm">
-            ✅ Linked{link?.telegram_username ? ` as @${link.telegram_username}` : ""} · <button className="underline" onClick={handleUnlink}>Unlink</button>
+            ✅ Linked{link?.telegram_username ? ` as @${link.telegram_username}` : ""} ·{" "}
+            <button className="underline" onClick={handleUnlink}>
+              Unlink
+            </button>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
-            <PrefToggle label="Direct messages" checked={!!link?.notify_dm} onChange={(v) => togglePref("notify_dm", v)} />
-            <PrefToggle label="Discussion replies" checked={!!link?.notify_reply} onChange={(v) => togglePref("notify_reply", v)} />
-            <PrefToggle label="Likes & upvotes" checked={!!link?.notify_engagement} onChange={(v) => togglePref("notify_engagement", v)} />
-            <PrefToggle label="Event updates" checked={!!link?.notify_events} onChange={(v) => togglePref("notify_events", v)} />
+            <PrefToggle
+              label="Direct messages"
+              checked={!!link?.notify_dm}
+              onChange={(v) => togglePref("notify_dm", v)}
+            />
+            <PrefToggle
+              label="Discussion replies"
+              checked={!!link?.notify_reply}
+              onChange={(v) => togglePref("notify_reply", v)}
+            />
+            <PrefToggle
+              label="Likes & upvotes"
+              checked={!!link?.notify_engagement}
+              onChange={(v) => togglePref("notify_engagement", v)}
+            />
+            <PrefToggle
+              label="Event updates"
+              checked={!!link?.notify_events}
+              onChange={(v) => togglePref("notify_events", v)}
+            />
           </div>
         </div>
       )}
@@ -196,29 +326,75 @@ function TelegramCard() {
   );
 }
 
-function PrefToggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+function PrefToggle({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
   return (
     <label className="flex items-center justify-between rounded-xl border border-border bg-background px-4 py-3 text-sm">
       <span>{label}</span>
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="size-4 accent-gold" />
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="size-4 accent-gold"
+      />
     </label>
   );
 }
 
-function Input({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
+function Input({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</span>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-gold focus:outline-none" />
+      <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-gold focus:outline-none"
+      />
     </label>
   );
 }
 
-function Textarea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Textarea({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</span>
-      <textarea value={value} onChange={(e) => onChange(e.target.value)} rows={4} maxLength={500} className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-gold focus:outline-none" />
+      <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={4}
+        maxLength={500}
+        className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-gold focus:outline-none"
+      />
     </label>
   );
 }

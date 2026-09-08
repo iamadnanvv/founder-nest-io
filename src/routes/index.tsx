@@ -6,9 +6,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "FounderHuntCommunity // ship_faster.exe" },
-      { name: "description", content: "Where SaaS + AI founders actually ship. Lifetime access. ₹1,599. No subs. No gurus." },
+      {
+        name: "description",
+        content:
+          "Where SaaS + AI founders actually ship. Lifetime access. ₹1,599. No subs. No gurus.",
+      },
       { property: "og:title", content: "FounderHuntCommunity" },
-      { property: "og:description", content: "Where SaaS + AI founders actually ship. Lifetime access. ₹1,599." },
+      {
+        property: "og:description",
+        content: "Where SaaS + AI founders actually ship. Lifetime access. ₹1,599.",
+      },
     ],
   }),
   component: LandingPage,
@@ -49,7 +56,9 @@ function Ticker() {
     <div className="border-b-2 border-foreground bg-acid text-background overflow-hidden">
       <div className="flex whitespace-nowrap animate-marquee py-2 font-mono text-xs font-bold uppercase tracking-widest">
         {row.map((t, i) => (
-          <span key={i} className="mx-6 shrink-0">{t}</span>
+          <span key={i} className="mx-6 shrink-0">
+            {t}
+          </span>
         ))}
       </div>
     </div>
@@ -69,13 +78,24 @@ function Nav() {
           </span>
         </Link>
         <div className="hidden gap-6 font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground md:flex">
-          <a href="#benefits" className="hover:text-acid">01_network</a>
-          <a href="#stories" className="hover:text-acid">02_wins</a>
-          <a href="#pricing" className="hover:text-acid">03_price</a>
-          <a href="#faq" className="hover:text-acid">04_faq</a>
+          <a href="#benefits" className="hover:text-acid">
+            01_network
+          </a>
+          <a href="#stories" className="hover:text-acid">
+            02_wins
+          </a>
+          <a href="#pricing" className="hover:text-acid">
+            03_price
+          </a>
+          <a href="#faq" className="hover:text-acid">
+            04_faq
+          </a>
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/auth" className="hidden font-mono text-xs font-bold uppercase text-muted-foreground hover:text-foreground sm:block">
+          <Link
+            to="/auth"
+            className="hidden font-mono text-xs font-bold uppercase text-muted-foreground hover:text-foreground sm:block"
+          >
             sign_in
           </Link>
           <Link
@@ -103,9 +123,15 @@ function Hero() {
             </span>
             live · v2.0
           </span>
-          <span className="border-2 border-foreground bg-hot px-2 py-1 text-background">lifetime_deal</span>
-          <span className="border-2 border-foreground bg-gold px-2 py-1 text-background">₹1,599_forever</span>
-          <span className="border-2 border-foreground bg-electric px-2 py-1 text-background">est.2026</span>
+          <span className="border-2 border-foreground bg-hot px-2 py-1 text-background">
+            lifetime_deal
+          </span>
+          <span className="border-2 border-foreground bg-gold px-2 py-1 text-background">
+            ₹1,599_forever
+          </span>
+          <span className="border-2 border-foreground bg-electric px-2 py-1 text-background">
+            est.2026
+          </span>
         </div>
 
         <h1 className="font-display text-[14vw] font-bold leading-[0.85] tracking-tight text-foreground md:text-[9rem]">
@@ -121,8 +147,9 @@ function Hero() {
 
         <div className="mt-10 grid gap-8 md:grid-cols-[1.2fr_1fr]">
           <p className="text-lg leading-snug text-foreground/85 md:text-xl">
-            The community for SaaS + AI founders who <span className="bg-foreground text-background px-1">actually ship</span>.
-            No fluff. No gurus. Just builders trading feedback, code, and hard-won growth tactics — 24/7.
+            The community for SaaS + AI founders who{" "}
+            <span className="bg-foreground text-background px-1">actually ship</span>. No fluff. No
+            gurus. Just builders trading feedback, code, and hard-won growth tactics — 24/7.
           </p>
           <div className="flex flex-col gap-3">
             <Link
@@ -183,8 +210,12 @@ function Stats() {
         {items.map((s, i) => (
           <div key={s.label} className={`relative p-6 md:p-8 ${i === 0 ? "border-l-0" : ""}`}>
             <div className={`absolute right-3 top-3 size-3 ${s.color}`} />
-            <div className="font-display text-4xl font-bold text-foreground md:text-5xl">{s.value}</div>
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
+            <div className="font-display text-4xl font-bold text-foreground md:text-5xl">
+              {s.value}
+            </div>
+            <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              {s.label}
+            </div>
           </div>
         ))}
       </div>
@@ -194,20 +225,59 @@ function Stats() {
 
 function Benefits() {
   const items = [
-    { title: "Vetted mastermind", body: "Weekly peer calls. UI teardowns, conversion fixes, real growth tactics from founders shipping.", tag: "01", color: "bg-acid", shadow: "shadow-brutal-acid" },
-    { title: "AI + SaaS vault", body: "Curated prompts, custom GPTs, technical blueprints, and SOPs for lean teams scaling fast.", tag: "02", color: "bg-hot", shadow: "shadow-brutal-hot" },
-    { title: "Investor access", body: "Direct line to micro-VCs and angels who back early-stage AI-first companies in India and globally.", tag: "03", color: "bg-gold", shadow: "shadow-brutal-gold" },
-    { title: "Co-founder match", body: "Find technical and non-technical co-founders, designers, and growth partners in the marketplace.", tag: "04", color: "bg-electric", shadow: "shadow-brutal" },
-    { title: "Founder showcase", body: "Launch your product to a hyper-relevant audience. Collect feedback, upvotes, and first 100 users.", tag: "05", color: "bg-acid", shadow: "shadow-brutal-acid" },
-    { title: "Lifetime network", body: "Pay once, stay forever. Watch your peers grow from MVP to ₹10Cr ARR with you alongside.", tag: "06", color: "bg-hot", shadow: "shadow-brutal-hot" },
+    {
+      title: "Vetted mastermind",
+      body: "Weekly peer calls. UI teardowns, conversion fixes, real growth tactics from founders shipping.",
+      tag: "01",
+      color: "bg-acid",
+      shadow: "shadow-brutal-acid",
+    },
+    {
+      title: "AI + SaaS vault",
+      body: "Curated prompts, custom GPTs, technical blueprints, and SOPs for lean teams scaling fast.",
+      tag: "02",
+      color: "bg-hot",
+      shadow: "shadow-brutal-hot",
+    },
+    {
+      title: "Investor access",
+      body: "Direct line to micro-VCs and angels who back early-stage AI-first companies in India and globally.",
+      tag: "03",
+      color: "bg-gold",
+      shadow: "shadow-brutal-gold",
+    },
+    {
+      title: "Co-founder match",
+      body: "Find technical and non-technical co-founders, designers, and growth partners in the marketplace.",
+      tag: "04",
+      color: "bg-electric",
+      shadow: "shadow-brutal",
+    },
+    {
+      title: "Founder showcase",
+      body: "Launch your product to a hyper-relevant audience. Collect feedback, upvotes, and first 100 users.",
+      tag: "05",
+      color: "bg-acid",
+      shadow: "shadow-brutal-acid",
+    },
+    {
+      title: "Lifetime network",
+      body: "Pay once, stay forever. Watch your peers grow from MVP to ₹10Cr ARR with you alongside.",
+      tag: "06",
+      color: "bg-hot",
+      shadow: "shadow-brutal-hot",
+    },
   ];
   return (
     <section id="benefits" className="mx-auto mb-32 max-w-6xl px-6">
       <div className="mb-14 flex flex-col items-start justify-between gap-4 border-b-2 border-foreground pb-6 md:flex-row md:items-end">
         <div>
-          <div className="font-mono text-xs font-bold uppercase tracking-widest text-acid">// what_you_get</div>
+          <div className="font-mono text-xs font-bold uppercase tracking-widest text-acid">
+            // what_you_get
+          </div>
           <h2 className="mt-2 font-display text-5xl font-bold tracking-tight text-foreground md:text-6xl">
-            everything a founder <span className="italic text-muted-foreground">actually</span> needs.
+            everything a founder <span className="italic text-muted-foreground">actually</span>{" "}
+            needs.
           </h2>
         </div>
         <div className="font-mono text-xs uppercase text-muted-foreground">six_pillars.txt</div>
@@ -220,10 +290,14 @@ function Benefits() {
             style={{ transform: i % 2 ? "rotate(0.4deg)" : "rotate(-0.3deg)" }}
           >
             <div className="mb-6 flex items-center justify-between">
-              <div className={`inline-flex size-10 items-center justify-center border-2 border-foreground ${b.color} font-mono text-sm font-bold text-background`}>
+              <div
+                className={`inline-flex size-10 items-center justify-center border-2 border-foreground ${b.color} font-mono text-sm font-bold text-background`}
+              >
                 {b.tag}
               </div>
-              <div className="font-mono text-[10px] uppercase text-muted-foreground">pillar_{b.tag}</div>
+              <div className="font-mono text-[10px] uppercase text-muted-foreground">
+                pillar_{b.tag}
+              </div>
             </div>
             <h3 className="font-display text-2xl font-bold text-foreground">{b.title}</h3>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{b.body}</p>
@@ -236,19 +310,52 @@ function Benefits() {
 
 function SuccessStories() {
   const stories = [
-    { initials: "AM", name: "Arjun Mehta", company: "PromptFlow", quote: "Joined in April, launched my GPT-wrapper in May, hit $2k MRR by June. The community's feedback saved me 3 months.", color: "bg-acid" },
-    { initials: "SC", name: "Sarah Chen", company: "NoCodeBase", quote: "The distribution channels shared here are a goldmine. We saw a 300% spike in traffic after the SEO teardown.", color: "bg-hot" },
-    { initials: "RK", name: "Ravi Kapoor", company: "LedgerAI", quote: "Found my technical co-founder in week two. We closed our angel round in 6 weeks through warm intros.", color: "bg-gold" },
-    { initials: "NP", name: "Neha Patel", company: "Snipdesk", quote: "I was stuck at $500 MRR for months. One growth audit later, we 5x'd in 60 days.", color: "bg-electric" },
+    {
+      initials: "AM",
+      name: "Arjun Mehta",
+      company: "PromptFlow",
+      quote:
+        "Joined in April, launched my GPT-wrapper in May, hit $2k MRR by June. The community's feedback saved me 3 months.",
+      color: "bg-acid",
+    },
+    {
+      initials: "SC",
+      name: "Sarah Chen",
+      company: "NoCodeBase",
+      quote:
+        "The distribution channels shared here are a goldmine. We saw a 300% spike in traffic after the SEO teardown.",
+      color: "bg-hot",
+    },
+    {
+      initials: "RK",
+      name: "Ravi Kapoor",
+      company: "LedgerAI",
+      quote:
+        "Found my technical co-founder in week two. We closed our angel round in 6 weeks through warm intros.",
+      color: "bg-gold",
+    },
+    {
+      initials: "NP",
+      name: "Neha Patel",
+      company: "Snipdesk",
+      quote: "I was stuck at $500 MRR for months. One growth audit later, we 5x'd in 60 days.",
+      color: "bg-electric",
+    },
   ];
   return (
     <section id="stories" className="mx-auto mb-32 max-w-6xl px-6">
       <div className="mb-10 flex items-end justify-between border-b-2 border-foreground pb-4">
         <div>
-          <div className="font-mono text-xs font-bold uppercase tracking-widest text-hot">// recent_wins</div>
-          <h2 className="mt-2 font-display text-4xl font-bold text-foreground md:text-5xl">shipping & winning</h2>
+          <div className="font-mono text-xs font-bold uppercase tracking-widest text-hot">
+            // recent_wins
+          </div>
+          <h2 className="mt-2 font-display text-4xl font-bold text-foreground md:text-5xl">
+            shipping & winning
+          </h2>
         </div>
-        <div className="hidden font-mono text-xs uppercase text-muted-foreground md:block">last_90d</div>
+        <div className="hidden font-mono text-xs uppercase text-muted-foreground md:block">
+          last_90d
+        </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {stories.map((s, i) => (
@@ -258,7 +365,9 @@ function SuccessStories() {
             style={{ transform: i % 2 ? "rotate(0.3deg)" : "rotate(-0.4deg)" }}
           >
             <div className="flex gap-5">
-              <div className={`grid size-16 shrink-0 place-items-center border-2 border-foreground ${s.color} font-display text-lg font-bold text-background`}>
+              <div
+                className={`grid size-16 shrink-0 place-items-center border-2 border-foreground ${s.color} font-display text-lg font-bold text-background`}
+              >
                 {s.initials}
               </div>
               <div>
@@ -278,14 +387,22 @@ function SuccessStories() {
 
 function Testimonials() {
   const quotes = [
-    { quote: "The single best ₹1,599 I've spent on my startup journey.", author: "Kabir · B2B SaaS" },
-    { quote: "Replaced three paid communities and a $1k mastermind.", author: "Ananya · AI tooling" },
+    {
+      quote: "The single best ₹1,599 I've spent on my startup journey.",
+      author: "Kabir · B2B SaaS",
+    },
+    {
+      quote: "Replaced three paid communities and a $1k mastermind.",
+      author: "Ananya · AI tooling",
+    },
     { quote: "I finally have peers who actually ship.", author: "Devansh · Indie hacker" },
   ];
   return (
     <section className="mb-32 border-y-2 border-foreground bg-surface/40 py-20">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="mb-8 font-mono text-xs font-bold uppercase tracking-widest text-acid">// receipts.log</div>
+        <div className="mb-8 font-mono text-xs font-bold uppercase tracking-widest text-acid">
+          // receipts.log
+        </div>
         <div className="grid gap-6 md:grid-cols-3">
           {quotes.map((q, i) => (
             <blockquote
@@ -295,7 +412,9 @@ function Testimonials() {
             >
               <div className="mb-3 font-mono text-2xl text-acid">"</div>
               <p className="font-display text-lg text-foreground leading-snug">{q.quote}</p>
-              <footer className="mt-4 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">— {q.author}</footer>
+              <footer className="mt-4 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                — {q.author}
+              </footer>
             </blockquote>
           ))}
         </div>
@@ -316,11 +435,14 @@ function Pricing() {
             no_bs.deal
           </div>
           <div className="font-mono text-xs font-bold uppercase tracking-widest">// pricing_v1</div>
-          <h2 className="mt-2 font-display text-5xl font-bold leading-none md:text-6xl">the no-brainer deal.</h2>
+          <h2 className="mt-2 font-display text-5xl font-bold leading-none md:text-6xl">
+            the no-brainer deal.
+          </h2>
           <div className="mt-8 flex flex-wrap items-end gap-4">
             <div className="font-display text-7xl font-bold leading-none md:text-8xl">₹1,599</div>
             <div className="font-mono text-sm uppercase tracking-widest">
-              /lifetime<br />
+              /lifetime
+              <br />
               <span className="opacity-70">↑ ₹2,999 @ 500 members</span>
             </div>
           </div>
@@ -335,7 +457,9 @@ function Pricing() {
               "Startup showcase & upvotes",
             ].map((f) => (
               <li key={f} className="flex items-center gap-3 border-b-2 border-background/30 py-2">
-                <div className="grid size-5 place-items-center border-2 border-background text-[10px] font-bold">✓</div>
+                <div className="grid size-5 place-items-center border-2 border-background text-[10px] font-bold">
+                  ✓
+                </div>
                 <span className="text-sm">{f}</span>
               </li>
             ))}
@@ -356,18 +480,40 @@ function Pricing() {
 
 function FAQ() {
   const faqs = [
-    { q: "What do I get for ₹1,599?", a: "Permanent access to the community, resource library, founder directory, events, and all future features. No recurring charges, ever." },
-    { q: "Who is this for?", a: "SaaS founders, AI startup builders, indie hackers, technical and non-technical founders, and investors. Whether you're at $0 or $10k MRR." },
-    { q: "Why is it so cheap?", a: "We're building the foundation. Early founders get the best price and help shape the community. Price doubles at 500 members." },
-    { q: "What happens after I pay?", a: "Your account is instantly activated. You get immediate access to the community feed, resources, and member directory." },
-    { q: "Is there a refund policy?", a: "Given the digital nature of the assets and instant access, all sales are final. We're confident you'll find value in 24 hours." },
-    { q: "Can I connect with investors?", a: "Yes. The Investor Hub lists active angels and micro-VCs, and you can apply to monthly Demo Days for direct intros." },
+    {
+      q: "What do I get for ₹1,599?",
+      a: "Permanent access to the community, resource library, founder directory, events, and all future features. No recurring charges, ever.",
+    },
+    {
+      q: "Who is this for?",
+      a: "SaaS founders, AI startup builders, indie hackers, technical and non-technical founders, and investors. Whether you're at $0 or $10k MRR.",
+    },
+    {
+      q: "Why is it so cheap?",
+      a: "We're building the foundation. Early founders get the best price and help shape the community. Price doubles at 500 members.",
+    },
+    {
+      q: "What happens after I pay?",
+      a: "Your account is instantly activated. You get immediate access to the community feed, resources, and member directory.",
+    },
+    {
+      q: "Is there a refund policy?",
+      a: "Given the digital nature of the assets and instant access, all sales are final. We're confident you'll find value in 24 hours.",
+    },
+    {
+      q: "Can I connect with investors?",
+      a: "Yes. The Investor Hub lists active angels and micro-VCs, and you can apply to monthly Demo Days for direct intros.",
+    },
   ];
   return (
     <section id="faq" className="mx-auto mb-32 max-w-3xl px-6">
       <div className="mb-8 border-b-2 border-foreground pb-4">
-        <div className="font-mono text-xs font-bold uppercase tracking-widest text-electric">// faq.md</div>
-        <h2 className="mt-2 font-display text-4xl font-bold text-foreground md:text-5xl">questions, answered.</h2>
+        <div className="font-mono text-xs font-bold uppercase tracking-widest text-electric">
+          // faq.md
+        </div>
+        <h2 className="mt-2 font-display text-4xl font-bold text-foreground md:text-5xl">
+          questions, answered.
+        </h2>
       </div>
       <div className="space-y-3">
         {faqs.map((f, i) => (
@@ -400,11 +546,15 @@ function CTA() {
       <div className="relative border-2 border-foreground bg-foreground p-10 text-background md:p-16">
         <div className="absolute inset-0 opacity-10 bg-stripes" aria-hidden />
         <div className="relative">
-          <div className="font-mono text-xs font-bold uppercase tracking-widest text-acid">// final_call</div>
+          <div className="font-mono text-xs font-bold uppercase tracking-widest text-acid">
+            // final_call
+          </div>
           <h2 className="mt-3 font-display text-5xl font-bold leading-[0.95] md:text-7xl">
             stop building alone.
             <br />
-            <span className="bg-acid text-background px-2 -skew-x-6 inline-block">start shipping.</span>
+            <span className="bg-acid text-background px-2 -skew-x-6 inline-block">
+              start shipping.
+            </span>
           </h2>
           <p className="mt-6 max-w-2xl font-medium opacity-80">
             Next 100 founders lock in ₹1,599 lifetime. After that: ₹2,999 forever.
@@ -432,13 +582,31 @@ function Footer() {
           <span className="font-display text-base font-bold text-foreground">founder/hunt</span>
         </Link>
         <div className="flex flex-wrap items-center justify-center gap-4 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-          <a href="https://whatsapp.com/channel/0029VbClPX9KgsNsQnp5yB2E" target="_blank" rel="noopener noreferrer" className="border-2 border-foreground bg-acid px-3 py-1.5 text-background hover:translate-x-[-1px] hover:translate-y-[-1px]">wa channel</a>
-          <a href="https://chat.whatsapp.com/KByJpDAN8JO0p5MhCgccdR" target="_blank" rel="noopener noreferrer" className="border-2 border-foreground bg-foreground px-3 py-1.5 text-background hover:translate-x-[-1px] hover:translate-y-[-1px]">wa community</a>
+          <a
+            href="https://whatsapp.com/channel/0029VbClPX9KgsNsQnp5yB2E"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-2 border-foreground bg-acid px-3 py-1.5 text-background hover:translate-x-[-1px] hover:translate-y-[-1px]"
+          >
+            wa channel
+          </a>
+          <a
+            href="https://chat.whatsapp.com/KByJpDAN8JO0p5MhCgccdR"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-2 border-foreground bg-foreground px-3 py-1.5 text-background hover:translate-x-[-1px] hover:translate-y-[-1px]"
+          >
+            wa community
+          </a>
           <TermsLink className="uppercase hover:text-acid" />
           <PrivacyLink className="uppercase hover:text-acid" />
-          <a href="mailto:hello@founderhunt.community" className="hover:text-acid">contact</a>
+          <a href="mailto:hello@founderhunt.community" className="hover:text-acid">
+            contact
+          </a>
         </div>
-        <div className="font-mono text-[10px] uppercase text-muted-foreground">© 2026 · built_in_public</div>
+        <div className="font-mono text-[10px] uppercase text-muted-foreground">
+          © 2026 · built_in_public
+        </div>
       </div>
     </footer>
   );

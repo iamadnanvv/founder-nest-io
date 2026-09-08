@@ -11,8 +11,15 @@ export default defineTool({
   handler: async ({ limit }, ctx) => {
     if (!ctx.isAuthenticated()) return unauthorized();
     const sb = supabaseForUser(ctx);
-    const { data, error } = await sb.from("startups").select("*").order("created_at", { ascending: false }).limit(limit);
+    const { data, error } = await sb
+      .from("startups")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    return { content: [{ type: "text", text: JSON.stringify(data) }], structuredContent: { startups: data } };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data) }],
+      structuredContent: { startups: data },
+    };
   },
 });

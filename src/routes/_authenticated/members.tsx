@@ -3,7 +3,15 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ExternalLink, MessageCircle, Search, UserPlus, UserCheck, Sparkles, MapPin } from "lucide-react";
+import {
+  ExternalLink,
+  MessageCircle,
+  Search,
+  UserPlus,
+  UserCheck,
+  Sparkles,
+  MapPin,
+} from "lucide-react";
 import { LoadingState, EmptyState, ErrorState } from "@/components/states";
 
 export const Route = createFileRoute("/_authenticated/members")({
@@ -28,7 +36,12 @@ function MembersPage() {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
   }, []);
 
-  const { data: members, isPending, error, refetch } = useQuery({
+  const {
+    data: members,
+    isPending,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["members"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -45,7 +58,10 @@ function MembersPage() {
     queryKey: ["following", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase.from("follows").select("following_id").eq("follower_id", userId!);
+      const { data } = await supabase
+        .from("follows")
+        .select("following_id")
+        .eq("follower_id", userId!);
       return new Set((data ?? []).map((r) => r.following_id));
     },
   });
@@ -55,10 +71,16 @@ function MembersPage() {
   const toggleFollow = async (targetId: string) => {
     if (!userId) return;
     if (following?.has(targetId)) {
-      await supabase.from("follows").delete().eq("follower_id", userId).eq("following_id", targetId);
+      await supabase
+        .from("follows")
+        .delete()
+        .eq("follower_id", userId)
+        .eq("following_id", targetId);
       toast.success("Removed connection");
     } else {
-      const { error } = await supabase.from("follows").insert({ follower_id: userId, following_id: targetId });
+      const { error } = await supabase
+        .from("follows")
+        .insert({ follower_id: userId, following_id: targetId });
       if (error) {
         toast.error(error.message);
         return;
@@ -68,7 +90,8 @@ function MembersPage() {
     qc.invalidateQueries({ queryKey: ["following", userId] });
   };
 
-  const uniq = (key: string) => Array.from(new Set((members ?? []).map((m: any) => m[key]).filter(Boolean))) as string[];
+  const uniq = (key: string) =>
+    Array.from(new Set((members ?? []).map((m: any) => m[key]).filter(Boolean))) as string[];
   const stages = uniq("startup_stage");
   const industries = uniq("industry");
   const locations = uniq("location");
@@ -83,7 +106,8 @@ function MembersPage() {
     const complementary = theirSkills.filter((s) => !mySkills.has(s)).length;
     const sharedIndustry = me.industry && m.industry === me.industry ? 3 : 0;
     const myInterests = new Set<string>((me.interests ?? []).map((s: string) => s.toLowerCase()));
-    const sharedInterests = ((m.interests ?? []) as string[]).filter((s) => myInterests.has(s.toLowerCase())).length * 2;
+    const sharedInterests =
+      ((m.interests ?? []) as string[]).filter((s) => myInterests.has(s.toLowerCase())).length * 2;
     const sameStage = me.startup_stage && m.startup_stage === me.startup_stage ? 1 : 0;
     return complementary * 2 + sharedIndustry + sharedInterests + sameStage;
   };
@@ -110,28 +134,51 @@ function MembersPage() {
       );
     });
     if (tab === "following") list = list.filter((m: any) => following?.has(m.id));
-    if (tab === "matches") list = [...list].sort((a, b) => matchScore(b) - matchScore(a)).filter((m) => matchScore(m) > 0);
+    if (tab === "matches")
+      list = [...list]
+        .sort((a, b) => matchScore(b) - matchScore(a))
+        .filter((m) => matchScore(m) > 0);
     return list;
-  }, [members, search, stage, industry, location, founderType, lookingFor, tab, following, userId, me]);
+  }, [
+    members,
+    search,
+    stage,
+    industry,
+    location,
+    founderType,
+    lookingFor,
+    tab,
+    following,
+    userId,
+    me,
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6 lg:p-10">
       <header>
-        <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">Founder Directory</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Discover founders, connect, and find a complementary co-founder.</p>
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">
+          Founder Directory
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Discover founders, connect, and find a complementary co-founder.
+        </p>
       </header>
 
       <div className="flex flex-wrap gap-2">
-        {([
-          ["all", "All founders"],
-          ["matches", "Co-founder matches"],
-          ["following", "My network"],
-        ] as [Tab, string][]).map(([value, label]) => (
+        {(
+          [
+            ["all", "All founders"],
+            ["matches", "Co-founder matches"],
+            ["following", "My network"],
+          ] as [Tab, string][]
+        ).map(([value, label]) => (
           <button
             key={value}
             onClick={() => setTab(value)}
             className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
-              tab === value ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground hover:text-foreground"
+              tab === value
+                ? "bg-primary text-primary-foreground"
+                : "border border-border text-muted-foreground hover:text-foreground"
             }`}
           >
             {value === "matches" && <Sparkles className="size-3.5" />}
@@ -152,11 +199,33 @@ function MembersPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Select value={stage} onChange={setStage} label="All stages" options={stages} />
-          <Select value={industry} onChange={setIndustry} label="All industries" options={industries} />
-          <Select value={location} onChange={setLocation} label="All locations" options={locations} />
-          <Select value={founderType} onChange={setFounderType} label="All founder types" options={founderTypes} />
-          <Select value={lookingFor} onChange={setLookingFor} label="Looking for anything" options={lookingFors} />
-          <span className="ml-auto self-center text-xs text-muted-foreground">{filtered.length} founders</span>
+          <Select
+            value={industry}
+            onChange={setIndustry}
+            label="All industries"
+            options={industries}
+          />
+          <Select
+            value={location}
+            onChange={setLocation}
+            label="All locations"
+            options={locations}
+          />
+          <Select
+            value={founderType}
+            onChange={setFounderType}
+            label="All founder types"
+            options={founderTypes}
+          />
+          <Select
+            value={lookingFor}
+            onChange={setLookingFor}
+            label="Looking for anything"
+            options={lookingFors}
+          />
+          <span className="ml-auto self-center text-xs text-muted-foreground">
+            {filtered.length} founders
+          </span>
         </div>
       </div>
 
@@ -166,7 +235,11 @@ function MembersPage() {
         <LoadingState label="Loading founders…" />
       ) : filtered.length === 0 ? (
         <EmptyState
-          title={tab === "following" ? "You haven't connected with anyone yet" : "No founders match these filters"}
+          title={
+            tab === "following"
+              ? "You haven't connected with anyone yet"
+              : "No founders match these filters"
+          }
           description={
             tab === "following"
               ? "Browse all founders and hit Connect to start building your network."
@@ -176,20 +249,34 @@ function MembersPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((m: any) => {
-            const initials = (m.full_name ?? "F").split(" ").map((s: string) => s[0]).slice(0, 2).join("").toUpperCase();
+            const initials = (m.full_name ?? "F")
+              .split(" ")
+              .map((s: string) => s[0])
+              .slice(0, 2)
+              .join("")
+              .toUpperCase();
             const isFollowing = following?.has(m.id);
             return (
-              <article key={m.id} className="flex flex-col rounded-2xl border border-border bg-surface p-5 hover:shadow-brutal-sm">
+              <article
+                key={m.id}
+                className="flex flex-col rounded-2xl border border-border bg-surface p-5 hover:shadow-brutal-sm"
+              >
                 <div className="mb-3 flex min-w-0 items-center gap-3">
                   {m.profile_image ? (
-                    <img src={m.profile_image} alt={m.full_name ?? "Founder"} className="size-12 shrink-0 rounded-full object-cover" />
+                    <img
+                      src={m.profile_image}
+                      alt={m.full_name ?? "Founder"}
+                      className="size-12 shrink-0 rounded-full object-cover"
+                    />
                   ) : (
                     <div className="grid size-12 shrink-0 place-items-center rounded-full bg-gold-soft font-display text-base font-semibold text-gold">
                       {initials}
                     </div>
                   )}
                   <div className="min-w-0">
-                    <h3 className="truncate font-display font-semibold text-foreground">{m.full_name ?? "Founder"}</h3>
+                    <h3 className="truncate font-display font-semibold text-foreground">
+                      {m.full_name ?? "Founder"}
+                    </h3>
                     <p className="truncate text-xs text-muted-foreground">
                       {[m.founder_type, m.startup_name].filter(Boolean).join(" · ") || "Founder"}
                     </p>
@@ -200,7 +287,9 @@ function MembersPage() {
                     <MapPin className="size-3" /> {m.location}
                   </p>
                 )}
-                {m.bio && <p className="mb-3 line-clamp-3 flex-1 text-sm text-muted-foreground">{m.bio}</p>}
+                {m.bio && (
+                  <p className="mb-3 line-clamp-3 flex-1 text-sm text-muted-foreground">{m.bio}</p>
+                )}
                 <div className="mb-3 flex flex-wrap gap-1.5">
                   {m.industry && <Tag className="text-electric">{m.industry}</Tag>}
                   {m.startup_stage && <Tag>{m.startup_stage}</Tag>}
@@ -222,7 +311,11 @@ function MembersPage() {
                         : "bg-primary text-primary-foreground"
                     }`}
                   >
-                    {isFollowing ? <UserCheck className="size-3.5" /> : <UserPlus className="size-3.5" />}
+                    {isFollowing ? (
+                      <UserCheck className="size-3.5" />
+                    ) : (
+                      <UserPlus className="size-3.5" />
+                    )}
                     {isFollowing ? "Connected" : "Connect"}
                   </button>
                   <Link
@@ -254,7 +347,13 @@ function MembersPage() {
 }
 
 function Tag({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <span className={`rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground ${className}`}>{children}</span>;
+  return (
+    <span
+      className={`rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground ${className}`}
+    >
+      {children}
+    </span>
+  );
 }
 
 function Select({
@@ -277,7 +376,9 @@ function Select({
     >
       <option value="all">{label}</option>
       {options.map((o) => (
-        <option key={o} value={o}>{o}</option>
+        <option key={o} value={o}>
+          {o}
+        </option>
       ))}
     </select>
   );

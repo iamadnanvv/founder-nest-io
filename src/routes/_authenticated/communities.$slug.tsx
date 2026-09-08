@@ -21,10 +21,19 @@ function CommunityPage() {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
   }, []);
 
-  const { data: community, isPending, error, refetch } = useQuery({
+  const {
+    data: community,
+    isPending,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["community", slug],
     queryFn: async () => {
-      const { data, error } = await supabase.from("communities").select("*").eq("slug", slug).maybeSingle();
+      const { data, error } = await supabase
+        .from("communities")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -63,7 +72,9 @@ function CommunityPage() {
       (
         await supabase
           .from("posts")
-          .select("id, content, category, created_at, profiles:profiles!posts_user_id_fkey(full_name)")
+          .select(
+            "id, content, category, created_at, profiles:profiles!posts_user_id_fkey(full_name)",
+          )
           .eq("community_id", community!.id)
           .order("created_at", { ascending: false })
           .limit(50)
@@ -72,9 +83,16 @@ function CommunityPage() {
 
   const toggleJoin = async () => {
     if (!userId || !community) return;
-    if (joined) await supabase.from("community_members").delete().eq("community_id", community.id).eq("user_id", userId);
+    if (joined)
+      await supabase
+        .from("community_members")
+        .delete()
+        .eq("community_id", community.id)
+        .eq("user_id", userId);
     else {
-      const { error } = await supabase.from("community_members").insert({ community_id: community.id, user_id: userId, role: "member" });
+      const { error } = await supabase
+        .from("community_members")
+        .insert({ community_id: community.id, user_id: userId, role: "member" });
       if (error) {
         toast.error(error.message);
         return;
@@ -96,9 +114,12 @@ function CommunityPage() {
       toast.error("Say a bit more");
       return;
     }
-    const { error } = await supabase
-      .from("posts")
-      .insert({ user_id: userId, content: content.trim(), category: "general", community_id: community.id });
+    const { error } = await supabase.from("posts").insert({
+      user_id: userId,
+      content: content.trim(),
+      category: "general",
+      community_id: community.id,
+    });
     if (error) {
       toast.error(error.message);
       return;
@@ -108,36 +129,66 @@ function CommunityPage() {
     toast.success("Posted");
   };
 
-  if (error) return <div className="p-6"><ErrorState message={(error as Error).message} onRetry={() => refetch()} /></div>;
-  if (isPending) return <div className="mx-auto max-w-3xl p-6"><LoadingState label="Loading community…" /></div>;
+  if (error)
+    return (
+      <div className="p-6">
+        <ErrorState message={(error as Error).message} onRetry={() => refetch()} />
+      </div>
+    );
+  if (isPending)
+    return (
+      <div className="mx-auto max-w-3xl p-6">
+        <LoadingState label="Loading community…" />
+      </div>
+    );
   if (!community)
     return (
       <div className="mx-auto max-w-3xl p-6">
         <EmptyState
           title="Community not found"
           description="It may have been removed."
-          action={<Link to="/communities" className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">Back to communities</Link>}
+          action={
+            <Link
+              to="/communities"
+              className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+            >
+              Back to communities
+            </Link>
+          }
         />
       </div>
     );
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-4 sm:p-6 lg:p-10">
-      <Link to="/communities" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+      <Link
+        to="/communities"
+        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-3.5" /> All communities
       </Link>
 
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 rounded-2xl border border-border bg-surface p-5">
         <div className="min-w-0">
-          {community.topic && <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[10px] text-gold">{community.topic}</span>}
-          <h1 className="mt-2 font-display text-2xl font-semibold text-foreground">{community.name}</h1>
-          {community.description && <p className="mt-1 text-sm text-muted-foreground">{community.description}</p>}
+          {community.topic && (
+            <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[10px] text-gold">
+              {community.topic}
+            </span>
+          )}
+          <h1 className="mt-2 font-display text-2xl font-semibold text-foreground">
+            {community.name}
+          </h1>
+          {community.description && (
+            <p className="mt-1 text-sm text-muted-foreground">{community.description}</p>
+          )}
           <p className="mt-2 text-xs text-muted-foreground">{members ?? 0} members</p>
         </div>
         <button
           onClick={toggleJoin}
           className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold ${
-            joined ? "border border-border text-muted-foreground hover:text-foreground" : "bg-primary text-primary-foreground"
+            joined
+              ? "border border-border text-muted-foreground hover:text-foreground"
+              : "bg-primary text-primary-foreground"
           }`}
         >
           {joined ? "Leave" : "Join"}
@@ -150,12 +201,18 @@ function CommunityPage() {
           onChange={(e) => setContent(e.target.value)}
           rows={3}
           maxLength={2000}
-          placeholder={joined ? `Share something with ${community.name}…` : "Join this community to post"}
+          placeholder={
+            joined ? `Share something with ${community.name}…` : "Join this community to post"
+          }
           disabled={!joined}
           className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none disabled:opacity-60"
         />
         <div className="mt-3 flex justify-end">
-          <button type="submit" disabled={!joined} className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">
+          <button
+            type="submit"
+            disabled={!joined}
+            className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+          >
             Post
           </button>
         </div>
@@ -168,11 +225,15 @@ function CommunityPage() {
           {posts!.map((p: any) => (
             <article key={p.id} className="rounded-2xl border border-border bg-surface p-5">
               <div className="mb-2 text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">{p.profiles?.full_name ?? "Founder"}</span>
+                <span className="font-semibold text-foreground">
+                  {p.profiles?.full_name ?? "Founder"}
+                </span>
                 {" · "}
                 {new Date(p.created_at).toLocaleDateString()}
               </div>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{p.content}</p>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                {p.content}
+              </p>
             </article>
           ))}
         </div>
