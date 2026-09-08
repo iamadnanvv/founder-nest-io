@@ -29,17 +29,23 @@ const phoneSchema = z
   .string()
   .trim()
   .regex(/^\+[1-9]\d{7,15}$/, "Use E.164 format, e.g. +14155552671");
-const otpSchema = z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code");
+const otpSchema = z
+  .string()
+  .trim()
+  .regex(/^\d{6}$/, "Enter the 6-digit code");
 
 type Mode = "signin" | "signup" | "forgot" | "phone";
-
 
 function AuthPage() {
   const navigate = useNavigate();
   const goNext = () => {
-    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    const params =
+      typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
     const n = safeNext(params?.get("next"));
-    if (n) { window.location.href = n; return; }
+    if (n) {
+      window.location.href = n;
+      return;
+    }
     navigate({ to: "/dashboard" });
   };
   const [mode, setMode] = useState<Mode>("signin");
@@ -133,10 +139,15 @@ function AuthPage() {
         toast.success("Account created. Welcome to FounderHunt.");
         goNext();
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email: emailOk.data, password: pwOk.data });
+        const { error } = await supabase.auth.signInWithPassword({
+          email: emailOk.data,
+          password: pwOk.data,
+        });
         if (error) {
           if (error.message.toLowerCase().includes("email not confirmed")) {
-            throw new Error("Please confirm your email first — check your inbox for the verification link.");
+            throw new Error(
+              "Please confirm your email first — check your inbox for the verification link.",
+            );
           }
           throw error;
         }
@@ -149,15 +160,11 @@ function AuthPage() {
     }
   };
 
-
-
-
   const switchMode = (next: Mode) => {
     setMode(next);
     setOtp("");
     setOtpSent(false);
   };
-
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -170,7 +177,11 @@ function AuthPage() {
         </Link>
         <div>
           <h2 className="font-display text-4xl font-bold leading-tight text-foreground">
-            Build Faster.<br />Validate <span className="text-gold italic">Smarter.</span><br />Scale Together.
+            Build Faster.
+            <br />
+            Validate <span className="text-gold italic">Smarter.</span>
+            <br />
+            Scale Together.
           </h2>
           <p className="mt-6 max-w-md text-muted-foreground">
             Join 420+ founders shipping the next generation of SaaS and AI products.
@@ -183,7 +194,10 @@ function AuthPage() {
 
       <div className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md">
-          <Link to="/" className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground lg:hidden">
+          <Link
+            to="/"
+            className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground lg:hidden"
+          >
             ← Back home
           </Link>
           <h1 className="font-display text-3xl font-bold text-foreground">
@@ -196,13 +210,9 @@ function AuthPage() {
             {mode === "signin" && "Sign in to your founder account."}
             {mode === "signup" && "Start your lifetime founder journey."}
             {mode === "forgot" && "Enter your email — we'll send a reset link."}
-            {mode === "phone" && (otpSent
-              ? `We sent a 6-digit code to ${phone}.`
-              : "We'll text you a one-time code.")}
+            {mode === "phone" &&
+              (otpSent ? `We sent a 6-digit code to ${phone}.` : "We'll text you a one-time code.")}
           </p>
-
-
-
 
           {mode !== "forgot" && mode !== "phone" && (
             <button
@@ -249,7 +259,10 @@ function AuthPage() {
               {otpSent && (
                 <button
                   type="button"
-                  onClick={() => { setOtpSent(false); setOtp(""); }}
+                  onClick={() => {
+                    setOtpSent(false);
+                    setOtp("");
+                  }}
                   className="w-full text-center text-xs text-muted-foreground hover:text-foreground"
                 >
                   Use a different number
@@ -259,18 +272,42 @@ function AuthPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === "signup" && (
-                <Field label="Full name" value={name} onChange={setName} type="text" placeholder="Jane Founder" />
+                <Field
+                  label="Full name"
+                  value={name}
+                  onChange={setName}
+                  type="text"
+                  placeholder="Jane Founder"
+                />
               )}
-              <Field label="Email" value={email} onChange={setEmail} type="email" placeholder="you@startup.com" />
+              <Field
+                label="Email"
+                value={email}
+                onChange={setEmail}
+                type="email"
+                placeholder="you@startup.com"
+              />
               {mode !== "forgot" && (
-                <Field label="Password" value={password} onChange={setPassword} type="password" placeholder="At least 8 characters" />
+                <Field
+                  label="Password"
+                  value={password}
+                  onChange={setPassword}
+                  type="password"
+                  placeholder="At least 8 characters"
+                />
               )}
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full rounded-xl bg-gold py-3 text-sm font-bold text-background transition hover:brightness-110 disabled:opacity-50"
               >
-                {loading ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
+                {loading
+                  ? "Please wait…"
+                  : mode === "signin"
+                    ? "Sign in"
+                    : mode === "signup"
+                      ? "Create account"
+                      : "Send reset link"}
               </button>
             </form>
           )}
@@ -278,32 +315,53 @@ function AuthPage() {
           <div className="mt-6 flex items-center justify-between text-sm text-muted-foreground">
             {mode === "signin" ? (
               <>
-                <button onClick={() => switchMode("forgot")} className="hover:text-foreground">Forgot password?</button>
+                <button onClick={() => switchMode("forgot")} className="hover:text-foreground">
+                  Forgot password?
+                </button>
                 <button onClick={() => switchMode("signup")} className="hover:text-foreground">
                   New here? <span className="text-gold">Create account</span>
                 </button>
               </>
             ) : mode === "signup" ? (
-              <button onClick={() => switchMode("signin")} className="ml-auto hover:text-foreground">
+              <button
+                onClick={() => switchMode("signin")}
+                className="ml-auto hover:text-foreground"
+              >
                 Already a member? <span className="text-gold">Sign in</span>
               </button>
             ) : (
-              <button onClick={() => switchMode("signin")} className="ml-auto hover:text-foreground">
+              <button
+                onClick={() => switchMode("signin")}
+                className="ml-auto hover:text-foreground"
+              >
                 ← Back to sign in
               </button>
             )}
           </div>
-
         </div>
       </div>
     </div>
   );
 }
 
-function Field({ label, value, onChange, type, placeholder }: { label: string; value: string; onChange: (v: string) => void; type: string; placeholder?: string }) {
+function Field({
+  label,
+  value,
+  onChange,
+  type,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type: string;
+  placeholder?: string;
+}) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">{label}</span>
+      <span className="mb-2 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        {label}
+      </span>
       <input
         type={type}
         value={value}

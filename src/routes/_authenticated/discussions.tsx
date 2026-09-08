@@ -26,7 +26,9 @@ function DiscussionsPage() {
     queryFn: async () => {
       let q = supabase
         .from("discussions")
-        .select("id, title, body, category, pinned, locked, reply_count, created_at, author_id, profiles:profiles!discussions_author_id_fkey(full_name)")
+        .select(
+          "id, title, body, category, pinned, locked, reply_count, created_at, author_id, profiles:profiles!discussions_author_id_fkey(full_name)",
+        )
         .order("pinned", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(100);
@@ -38,12 +40,22 @@ function DiscussionsPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (title.trim().length < 5 || body.trim().length < 10) { toast.error("Title 5+ chars, body 10+ chars"); return; }
+    if (title.trim().length < 5 || body.trim().length < 10) {
+      toast.error("Title 5+ chars, body 10+ chars");
+      return;
+    }
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
-    const { error } = await supabase.from("discussions").insert({ author_id: u.user.id, title: title.trim(), body: body.trim(), category: cat });
-    if (error) { toast.error(error.message); return; }
-    setTitle(""); setBody(""); setComposing(false);
+    const { error } = await supabase
+      .from("discussions")
+      .insert({ author_id: u.user.id, title: title.trim(), body: body.trim(), category: cat });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setTitle("");
+    setBody("");
+    setComposing(false);
     qc.invalidateQueries({ queryKey: ["discussions"] });
     toast.success("Thread posted");
   };
@@ -52,8 +64,12 @@ function DiscussionsPage() {
     <div className="mx-auto max-w-4xl space-y-6 p-6 lg:p-10">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-4xl font-black uppercase tracking-tight text-foreground">Discussions</h1>
-          <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">Long-form threads. Q&A. Deep dives.</p>
+          <h1 className="font-display text-4xl font-black uppercase tracking-tight text-foreground">
+            Discussions
+          </h1>
+          <p className="mt-1 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            Long-form threads. Q&A. Deep dives.
+          </p>
         </div>
         <button
           onClick={() => setComposing((v) => !v)}
@@ -64,7 +80,10 @@ function DiscussionsPage() {
       </header>
 
       {composing && (
-        <form onSubmit={submit} className="space-y-3 border-2 border-foreground bg-surface p-5 shadow-brutal">
+        <form
+          onSubmit={submit}
+          className="space-y-3 border-2 border-foreground bg-surface p-5 shadow-brutal"
+        >
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -86,9 +105,16 @@ function DiscussionsPage() {
               onChange={(e) => setCat(e.target.value as Cat)}
               className="border-2 border-foreground bg-background px-3 py-2 font-mono text-xs uppercase tracking-widest text-foreground"
             >
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
             </select>
-            <button type="submit" className="border-2 border-foreground bg-acid px-5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-background shadow-brutal-sm">
+            <button
+              type="submit"
+              className="border-2 border-foreground bg-acid px-5 py-2 font-mono text-xs font-bold uppercase tracking-wider text-background shadow-brutal-sm"
+            >
               Publish
             </button>
           </div>
@@ -96,9 +122,13 @@ function DiscussionsPage() {
       )}
 
       <div className="flex flex-wrap gap-2">
-        <Chip active={filter === "all"} onClick={() => setFilter("all")}>All</Chip>
+        <Chip active={filter === "all"} onClick={() => setFilter("all")}>
+          All
+        </Chip>
         {CATEGORIES.map((c) => (
-          <Chip key={c} active={filter === c} onClick={() => setFilter(c)}>{c}</Chip>
+          <Chip key={c} active={filter === c} onClick={() => setFilter(c)}>
+            {c}
+          </Chip>
         ))}
       </div>
 
@@ -120,17 +150,22 @@ function DiscussionsPage() {
                 <div className="flex items-center gap-2">
                   {t.pinned && <Pin className="size-3.5 text-hot" />}
                   {t.locked && <Lock className="size-3.5 text-muted-foreground" />}
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-electric">{t.category}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-electric">
+                    {t.category}
+                  </span>
                 </div>
                 <h3 className="mt-1 font-display text-xl font-bold text-foreground">{t.title}</h3>
                 <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{t.body}</p>
                 <div className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {t.profiles?.full_name ?? "Founder"} · {new Date(t.created_at).toLocaleDateString()}
+                  {t.profiles?.full_name ?? "Founder"} ·{" "}
+                  {new Date(t.created_at).toLocaleDateString()}
                 </div>
               </div>
               <div className="flex flex-col items-center border-2 border-foreground bg-background px-3 py-2">
                 <MessagesSquare className="size-4 text-electric" />
-                <span className="font-mono text-sm font-bold text-foreground">{t.reply_count ?? 0}</span>
+                <span className="font-mono text-sm font-bold text-foreground">
+                  {t.reply_count ?? 0}
+                </span>
               </div>
             </div>
           </Link>
@@ -140,12 +175,22 @@ function DiscussionsPage() {
   );
 }
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       onClick={onClick}
       className={`border-2 border-foreground px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest transition ${
-        active ? "bg-acid text-background shadow-brutal-sm" : "bg-background text-foreground hover:bg-surface"
+        active
+          ? "bg-acid text-background shadow-brutal-sm"
+          : "bg-background text-foreground hover:bg-surface"
       }`}
     >
       {children}

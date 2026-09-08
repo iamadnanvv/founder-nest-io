@@ -42,7 +42,12 @@ async function stubSupabaseAuth(page: import("@playwright/test").Page, stubs: St
           token_type: "bearer",
           expires_in: 3600,
           expires_at: Math.floor(Date.now() / 1000) + 3600,
-          user: { id: "stub-user", phone: PHONE.slice(1), aud: "authenticated", role: "authenticated" },
+          user: {
+            id: "stub-user",
+            phone: PHONE.slice(1),
+            aud: "authenticated",
+            role: "authenticated",
+          },
         },
       ),
     });
@@ -54,7 +59,12 @@ async function stubSupabaseAuth(page: import("@playwright/test").Page, stubs: St
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ id: "stub-user", phone: PHONE.slice(1), aud: "authenticated", role: "authenticated" }),
+      body: JSON.stringify({
+        id: "stub-user",
+        phone: PHONE.slice(1),
+        aud: "authenticated",
+        role: "authenticated",
+      }),
     });
   });
 }
@@ -119,7 +129,9 @@ test.describe("Phone OTP smoke", () => {
     await expect(page).toHaveURL(/\/auth/);
   });
 
-  test("server rejection of an invalid OTP shows an error and stays on the step", async ({ page }) => {
+  test("server rejection of an invalid OTP shows an error and stays on the step", async ({
+    page,
+  }) => {
     await stubSupabaseAuth(page, {
       verifyStatus: 400,
       verifyBody: { error: "invalid_grant", error_description: "Token has expired or is invalid" },
@@ -155,7 +167,11 @@ test.describe("Phone OTP smoke", () => {
     let sendCount = 0;
     await page.route(/\/auth\/v1\/otp(\?|$)/, async (route) => {
       sendCount += 1;
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ message_id: `stub-${sendCount}` }) });
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ message_id: `stub-${sendCount}` }),
+      });
     });
     await page.goto("/auth");
     await page.getByRole("button", { name: /continue with phone/i }).click();

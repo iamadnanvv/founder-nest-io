@@ -3,7 +3,9 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type AuthOAuth = {
-  getAuthorizationDetails: (id: string) => Promise<{ data: AuthDetails | null; error: Error | null }>;
+  getAuthorizationDetails: (
+    id: string,
+  ) => Promise<{ data: AuthDetails | null; error: Error | null }>;
   approveAuthorization: (id: string) => Promise<{ data: AuthResult | null; error: Error | null }>;
   denyAuthorization: (id: string) => Promise<{ data: AuthResult | null; error: Error | null }>;
 };
@@ -65,9 +67,17 @@ function Consent() {
     const { data, error } = approve
       ? await api.approveAuthorization(authorization_id)
       : await api.denyAuthorization(authorization_id);
-    if (error) { setBusy(false); setError(error.message); return; }
+    if (error) {
+      setBusy(false);
+      setError(error.message);
+      return;
+    }
     const target = data?.redirect_url ?? data?.redirect_to;
-    if (!target) { setBusy(false); setError("No redirect returned by the authorization server."); return; }
+    if (!target) {
+      setBusy(false);
+      setError("No redirect returned by the authorization server.");
+      return;
+    }
     window.location.href = target;
   }
 
@@ -76,15 +86,22 @@ function Consent() {
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 p-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Authorize connection</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          Authorize connection
+        </p>
         <h1 className="mt-2 font-display text-3xl font-bold text-foreground">
           Connect <span className="text-gold">{clientName}</span> to FounderHunt?
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          {clientName} will access FounderHunt tools and act as you. You can revoke this at any time.
+          {clientName} will access FounderHunt tools and act as you. You can revoke this at any
+          time.
         </p>
       </div>
-      {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-red-500">
+          {error}
+        </p>
+      )}
       <div className="flex gap-3">
         <button
           disabled={busy}

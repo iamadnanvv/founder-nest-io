@@ -1,4 +1,11 @@
-import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  Link,
+  useNavigate,
+  useRouterState,
+} from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -73,7 +80,12 @@ function AuthenticatedLayout() {
     queryKey: ["is-admin", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId!).eq("role", "admin").maybeSingle();
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId!)
+        .eq("role", "admin")
+        .maybeSingle();
       return !!data;
     },
   });
@@ -97,15 +109,24 @@ function AuthenticatedLayout() {
     if (!userId) return;
     const ch = supabase
       .channel("notif-badge")
-      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` }, () => {
-        queryClient.invalidateQueries({ queryKey: ["notif-unread", userId] });
-        queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
-      })
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["notif-unread", userId] });
+          queryClient.invalidateQueries({ queryKey: ["notifications", userId] });
+        },
+      )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [userId, queryClient]);
 
-  const nav = [...baseNav, ...(isAdmin ? [{ to: "/admin" as const, label: "Admin", icon: Shield }] : [])];
+  const nav = [
+    ...baseNav,
+    ...(isAdmin ? [{ to: "/admin" as const, label: "Admin", icon: Shield }] : []),
+  ];
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
@@ -149,8 +170,14 @@ function AuthenticatedLayout() {
           to="/notifications"
           className="mt-4 flex items-center justify-between border-2 border-foreground bg-background px-3 py-2 font-mono text-[11px] font-bold uppercase tracking-wider text-foreground shadow-brutal-sm hover:bg-electric hover:text-background"
         >
-          <span className="flex items-center gap-2"><Bell className="size-4" /> Alerts</span>
-          {unread ? <span className="grid size-5 place-items-center bg-hot text-[10px] text-background">{unread}</span> : null}
+          <span className="flex items-center gap-2">
+            <Bell className="size-4" /> Alerts
+          </span>
+          {unread ? (
+            <span className="grid size-5 place-items-center bg-hot text-[10px] text-background">
+              {unread}
+            </span>
+          ) : null}
         </Link>
         <button
           onClick={handleSignOut}
@@ -169,11 +196,20 @@ function AuthenticatedLayout() {
             <span className="font-display text-base font-bold text-foreground">founder/hunt</span>
           </Link>
           <div className="flex items-center gap-2">
-            <Link to="/notifications" className="relative border-2 border-foreground bg-background p-2">
+            <Link
+              to="/notifications"
+              className="relative border-2 border-foreground bg-background p-2"
+            >
               <Bell className="size-4" />
-              {unread ? <span className="absolute -right-1 -top-1 grid size-4 place-items-center bg-hot text-[9px] text-background">{unread}</span> : null}
+              {unread ? (
+                <span className="absolute -right-1 -top-1 grid size-4 place-items-center bg-hot text-[9px] text-background">
+                  {unread}
+                </span>
+              ) : null}
             </Link>
-            <button onClick={handleSignOut} className="text-xs text-muted-foreground">Sign out</button>
+            <button onClick={handleSignOut} className="text-xs text-muted-foreground">
+              Sign out
+            </button>
           </div>
         </header>
         <nav className="flex gap-1 overflow-x-auto border-b-2 border-foreground bg-surface px-3 py-2 lg:hidden">

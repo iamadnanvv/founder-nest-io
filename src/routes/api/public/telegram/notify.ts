@@ -34,7 +34,8 @@ export const Route = createFileRoute("/api/public/telegram/notify")({
           link?: string | null;
         };
 
-        if (!chat_id || !message) return Response.json({ ok: false, error: "bad payload" }, { status: 400 });
+        if (!chat_id || !message)
+          return Response.json({ ok: false, error: "bad payload" }, { status: 400 });
 
         const emoji = TYPE_EMOJI[type] ?? "🔔";
         const url = link ? `${PUBLIC_ORIGIN}${link.startsWith("/") ? link : `/${link}`}` : null;
@@ -53,5 +54,5 @@ export const Route = createFileRoute("/api/public/telegram/notify")({
 });
 
 function escapeHtml(s: string) {
-  return s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c] as string));
+  return s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c] as string);
 }

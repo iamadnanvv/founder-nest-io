@@ -24,7 +24,12 @@ function ThreadPage() {
     queryKey: ["is-admin", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId!).eq("role", "admin").maybeSingle();
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId!)
+        .eq("role", "admin")
+        .maybeSingle();
       return !!data;
     },
   });
@@ -46,7 +51,9 @@ function ThreadPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("discussion_replies")
-        .select("id, body, created_at, author_id, profiles:profiles!discussion_replies_author_id_fkey(full_name)")
+        .select(
+          "id, body, created_at, author_id, profiles:profiles!discussion_replies_author_id_fkey(full_name)",
+        )
         .eq("discussion_id", id)
         .order("created_at", { ascending: true });
       return data ?? [];
@@ -57,8 +64,13 @@ function ThreadPage() {
     e.preventDefault();
     if (reply.trim().length < 2) return;
     if (!userId) return;
-    const { error } = await supabase.from("discussion_replies").insert({ discussion_id: id, author_id: userId, body: reply.trim() });
-    if (error) { toast.error(error.message); return; }
+    const { error } = await supabase
+      .from("discussion_replies")
+      .insert({ discussion_id: id, author_id: userId, body: reply.trim() });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setReply("");
     qc.invalidateQueries({ queryKey: ["replies", id] });
     qc.invalidateQueries({ queryKey: ["discussion", id] });
@@ -81,14 +93,21 @@ function ThreadPage() {
   };
 
   if (!thread) {
-    return <div className="p-10 text-center font-mono text-xs uppercase text-muted-foreground">Loading…</div>;
+    return (
+      <div className="p-10 text-center font-mono text-xs uppercase text-muted-foreground">
+        Loading…
+      </div>
+    );
   }
 
   const canModerate = isAdmin || userId === thread.author_id;
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-6 lg:p-10">
-      <Link to="/discussions" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
+      <Link
+        to="/discussions"
+        className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-3" /> Back
       </Link>
 
@@ -96,11 +115,14 @@ function ThreadPage() {
         <div className="flex items-center gap-2">
           {thread.pinned && <Pin className="size-4 text-hot" />}
           {thread.locked && <Lock className="size-4 text-muted-foreground" />}
-          <span className="font-mono text-[10px] uppercase tracking-widest text-electric">{thread.category}</span>
+          <span className="font-mono text-[10px] uppercase tracking-widest text-electric">
+            {thread.category}
+          </span>
         </div>
         <h1 className="font-display text-3xl font-black text-foreground">{thread.title}</h1>
         <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-          {(thread as any).profiles?.full_name ?? "Founder"} · {new Date(thread.created_at).toLocaleDateString()}
+          {(thread as any).profiles?.full_name ?? "Founder"} ·{" "}
+          {new Date(thread.created_at).toLocaleDateString()}
         </div>
         <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{thread.body}</p>
 
@@ -108,15 +130,24 @@ function ThreadPage() {
           <div className="flex flex-wrap gap-2 border-t-2 border-foreground pt-4">
             {isAdmin && (
               <>
-                <button onClick={togglePin} className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-hot hover:text-background">
+                <button
+                  onClick={togglePin}
+                  className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-hot hover:text-background"
+                >
                   {thread.pinned ? "Unpin" : "Pin"}
                 </button>
-                <button onClick={toggleLock} className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-electric hover:text-background">
+                <button
+                  onClick={toggleLock}
+                  className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-electric hover:text-background"
+                >
                   {thread.locked ? "Unlock" : "Lock"}
                 </button>
               </>
             )}
-            <button onClick={del} className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-hot hover:text-background">
+            <button
+              onClick={del}
+              className="border-2 border-foreground bg-background px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-widest hover:bg-hot hover:text-background"
+            >
               <Trash2 className="mr-1 inline size-3" /> Delete
             </button>
           </div>
@@ -124,7 +155,9 @@ function ThreadPage() {
       </article>
 
       <section className="space-y-3">
-        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{replies?.length ?? 0} replies</h2>
+        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          {replies?.length ?? 0} replies
+        </h2>
         {(replies ?? []).map((r: any) => (
           <div key={r.id} className="border-2 border-foreground bg-background p-4">
             <div className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -136,7 +169,10 @@ function ThreadPage() {
       </section>
 
       {!thread.locked ? (
-        <form onSubmit={submitReply} className="space-y-3 border-2 border-foreground bg-surface p-4">
+        <form
+          onSubmit={submitReply}
+          className="space-y-3 border-2 border-foreground bg-surface p-4"
+        >
           <textarea
             value={reply}
             onChange={(e) => setReply(e.target.value)}
@@ -145,7 +181,10 @@ function ThreadPage() {
             placeholder="Add your reply…"
             className="w-full resize-y border-2 border-foreground bg-background px-3 py-2 text-sm focus:outline-none"
           />
-          <button type="submit" className="border-2 border-foreground bg-acid px-5 py-2 font-mono text-xs font-bold uppercase tracking-widest text-background shadow-brutal-sm">
+          <button
+            type="submit"
+            className="border-2 border-foreground bg-acid px-5 py-2 font-mono text-xs font-bold uppercase tracking-widest text-background shadow-brutal-sm"
+          >
             Reply
           </button>
         </form>

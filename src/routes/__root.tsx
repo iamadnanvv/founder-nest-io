@@ -20,7 +20,10 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="font-display text-7xl font-bold text-foreground">404</h1>
         <p className="mt-4 text-muted-foreground">This page doesn't exist.</p>
-        <Link to="/" className="mt-6 inline-block rounded-full bg-gold px-5 py-2 text-sm font-semibold text-background">
+        <Link
+          to="/"
+          className="mt-6 inline-block rounded-full bg-gold px-5 py-2 text-sm font-semibold text-background"
+        >
           Go home
         </Link>
       </div>
@@ -39,8 +42,18 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <h1 className="font-display text-xl font-semibold">Something went wrong</h1>
         <p className="mt-2 text-sm text-muted-foreground">Try again or head home.</p>
         <div className="mt-6 flex justify-center gap-2">
-          <button onClick={() => { router.invalidate(); reset(); }} className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-background">Try again</button>
-          <a href="/" className="rounded-full border border-border px-4 py-2 text-sm">Home</a>
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-background"
+          >
+            Try again
+          </button>
+          <a href="/" className="rounded-full border border-border px-4 py-2 text-sm">
+            Home
+          </a>
         </div>
       </div>
     </div>
@@ -53,13 +66,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "FounderHuntCommunity — Build Faster. Validate Smarter. Scale Together." },
-      { name: "description", content: "An exclusive community of SaaS and AI founders. Lifetime access for ₹1,599." },
-      { property: "og:title", content: "FounderHuntCommunity — Build Faster. Validate Smarter. Scale Together." },
-      { property: "og:description", content: "An exclusive community of SaaS and AI founders. Lifetime access for ₹1,599." },
+      {
+        name: "description",
+        content: "An exclusive community of SaaS and AI founders. Lifetime access for ₹1,599.",
+      },
+      {
+        property: "og:title",
+        content: "FounderHuntCommunity — Build Faster. Validate Smarter. Scale Together.",
+      },
+      {
+        property: "og:description",
+        content: "An exclusive community of SaaS and AI founders. Lifetime access for ₹1,599.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "FounderHuntCommunity — Build Faster. Validate Smarter. Scale Together." },
-      { name: "twitter:description", content: "An exclusive community of SaaS and AI founders. Lifetime access for ₹1,599." },
+      {
+        name: "twitter:title",
+        content: "FounderHuntCommunity — Build Faster. Validate Smarter. Scale Together.",
+      },
+      {
+        name: "twitter:description",
+        content: "An exclusive community of SaaS and AI founders. Lifetime access for ₹1,599.",
+      },
       { property: "og:image", content: "https://foundercommunity.vercel.app/og-image.jpg" },
       { name: "twitter:image", content: "https://foundercommunity.vercel.app/og-image.jpg" },
     ],

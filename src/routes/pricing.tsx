@@ -86,7 +86,6 @@ function PricingPage() {
     const onFocus = () => void readAccess();
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /** Manual re-check for members who paid through the hosted link. */

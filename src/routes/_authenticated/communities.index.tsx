@@ -21,7 +21,12 @@ function CommunitiesPage() {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
   }, []);
 
-  const { data: communities, isPending, error, refetch } = useQuery({
+  const {
+    data: communities,
+    isPending,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["communities"],
     queryFn: async () => {
       const { data, error } = await supabase.from("communities").select("*").order("created_at");
@@ -34,7 +39,10 @@ function CommunitiesPage() {
     queryKey: ["my-communities", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase.from("community_members").select("community_id").eq("user_id", userId!);
+      const { data } = await supabase
+        .from("community_members")
+        .select("community_id")
+        .eq("user_id", userId!);
       return new Set((data ?? []).map((r) => r.community_id));
     },
   });
@@ -54,10 +62,16 @@ function CommunitiesPage() {
   const toggleJoin = async (communityId: string) => {
     if (!userId) return;
     if (memberships?.has(communityId)) {
-      await supabase.from("community_members").delete().eq("community_id", communityId).eq("user_id", userId);
+      await supabase
+        .from("community_members")
+        .delete()
+        .eq("community_id", communityId)
+        .eq("user_id", userId);
       toast.success("Left community");
     } else {
-      const { error } = await supabase.from("community_members").insert({ community_id: communityId, user_id: userId, role: "member" });
+      const { error } = await supabase
+        .from("community_members")
+        .insert({ community_id: communityId, user_id: userId, role: "member" });
       if (error) {
         toast.error(error.message);
         return;
@@ -75,7 +89,12 @@ function CommunitiesPage() {
       toast.error("Name needs at least 3 characters");
       return;
     }
-    const slug = form.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    const slug = form.name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 40);
     const { error } = await supabase.from("communities").insert({
       slug,
       name: form.name.trim(),
@@ -87,7 +106,12 @@ function CommunitiesPage() {
       toast.error(error.message);
       return;
     }
-    await supabase.from("community_members").insert({ community_id: (await supabase.from("communities").select("id").eq("slug", slug).maybeSingle()).data!.id, user_id: userId, role: "member" });
+    await supabase.from("community_members").insert({
+      community_id: (await supabase.from("communities").select("id").eq("slug", slug).maybeSingle())
+        .data!.id,
+      user_id: userId,
+      role: "member",
+    });
     setForm({ name: "", topic: "", description: "" });
     setOpen(false);
     qc.invalidateQueries({ queryKey: ["communities"] });
@@ -99,8 +123,12 @@ function CommunitiesPage() {
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6 lg:p-10">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
         <div className="min-w-0">
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">Communities</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Topic-based spaces for focused conversations.</p>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-foreground">
+            Communities
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Topic-based spaces for focused conversations.
+          </p>
         </div>
         <button
           onClick={() => setOpen((v) => !v)}
@@ -111,7 +139,10 @@ function CommunitiesPage() {
       </header>
 
       {open && (
-        <form onSubmit={create} className="grid gap-3 rounded-2xl border border-border bg-surface p-5 sm:grid-cols-2">
+        <form
+          onSubmit={create}
+          className="grid gap-3 rounded-2xl border border-border bg-surface p-5 sm:grid-cols-2"
+        >
           <input
             required
             placeholder="Community name"
@@ -133,7 +164,10 @@ function CommunitiesPage() {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             className="rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none sm:col-span-2"
           />
-          <button type="submit" className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground sm:col-span-2">
+          <button
+            type="submit"
+            className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground sm:col-span-2"
+          >
             Create community
           </button>
         </form>
@@ -144,26 +178,49 @@ function CommunitiesPage() {
       ) : isPending ? (
         <LoadingState label="Loading communities…" />
       ) : (communities ?? []).length === 0 ? (
-        <EmptyState icon={<Users2 className="size-5" />} title="No communities yet" description="Create the first one." />
+        <EmptyState
+          icon={<Users2 className="size-5" />}
+          title="No communities yet"
+          description="Create the first one."
+        />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {communities!.map((c) => {
             const joined = memberships?.has(c.id);
             return (
-              <article key={c.id} className="flex flex-col rounded-2xl border border-border bg-surface p-5">
+              <article
+                key={c.id}
+                className="flex flex-col rounded-2xl border border-border bg-surface p-5"
+              >
                 <div className="mb-2 flex items-center gap-2">
-                  {c.topic && <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[10px] text-gold">{c.topic}</span>}
-                  <span className="text-[11px] text-muted-foreground">{counts?.[c.id] ?? 0} members</span>
+                  {c.topic && (
+                    <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[10px] text-gold">
+                      {c.topic}
+                    </span>
+                  )}
+                  <span className="text-[11px] text-muted-foreground">
+                    {counts?.[c.id] ?? 0} members
+                  </span>
                 </div>
-                <Link to="/communities/$slug" params={{ slug: c.slug }} className="font-display text-lg font-semibold text-foreground hover:text-primary">
+                <Link
+                  to="/communities/$slug"
+                  params={{ slug: c.slug }}
+                  className="font-display text-lg font-semibold text-foreground hover:text-primary"
+                >
                   {c.name}
                 </Link>
-                {c.description && <p className="mt-1 line-clamp-3 flex-1 text-sm text-muted-foreground">{c.description}</p>}
+                {c.description && (
+                  <p className="mt-1 line-clamp-3 flex-1 text-sm text-muted-foreground">
+                    {c.description}
+                  </p>
+                )}
                 <div className="mt-4 flex items-center gap-2">
                   <button
                     onClick={() => toggleJoin(c.id)}
                     className={`rounded-full px-4 py-2 text-xs font-semibold ${
-                      joined ? "border border-border text-muted-foreground hover:text-foreground" : "bg-primary text-primary-foreground"
+                      joined
+                        ? "border border-border text-muted-foreground hover:text-foreground"
+                        : "bg-primary text-primary-foreground"
                     }`}
                   >
                     {joined ? "Leave" : "Join"}

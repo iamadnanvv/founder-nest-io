@@ -21,9 +21,7 @@ export default defineConfig({
     trace: "on-first-retry",
     viewport: { width: 1280, height: 800 },
   },
-  projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-  ],
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: "bun run preview --port 8080",
     url: "http://localhost:8080",
