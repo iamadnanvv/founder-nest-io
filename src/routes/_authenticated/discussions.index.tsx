@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { MessagesSquare, Pin, Lock, Plus } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/discussions")({
+export const Route = createFileRoute("/_authenticated/discussions/")({
   head: () => ({ meta: [{ title: "Discussions · founder/hunt" }] }),
   component: DiscussionsPage,
 });

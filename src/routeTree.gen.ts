@@ -20,12 +20,10 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedDiscussionsRouteImport } from './routes/_authenticated/discussions'
 import { Route as AuthenticatedEventsRouteImport } from './routes/_authenticated/events'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedMarketplaceRouteImport } from './routes/_authenticated/marketplace'
 import { Route as AuthenticatedMembersRouteImport } from './routes/_authenticated/members'
-import { Route as AuthenticatedMessagesRouteImport } from './routes/_authenticated/messages'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedResourcesRouteImport } from './routes/_authenticated/resources'
@@ -34,7 +32,9 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedCommunitiesIndexRouteImport } from './routes/_authenticated/communities.index'
 import { Route as AuthenticatedCommunitiesSlugRouteImport } from './routes/_authenticated/communities.$slug'
+import { Route as AuthenticatedDiscussionsIndexRouteImport } from './routes/_authenticated/discussions.index'
 import { Route as AuthenticatedDiscussionsIdRouteImport } from './routes/_authenticated/discussions.$id'
+import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
 import { Route as AuthenticatedMessagesUserIdRouteImport } from './routes/_authenticated/messages.$userId'
 import { Route as ApiPublicTelegramNotifyRouteImport } from './routes/api/public/telegram/notify'
 import { Route as ApiPublicTelegramWebhookRouteImport } from './routes/api/public/telegram/webhook'
@@ -95,12 +95,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedDiscussionsRoute =
-  AuthenticatedDiscussionsRouteImport.update({
-    id: '/discussions',
-    path: '/discussions',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedEventsRoute = AuthenticatedEventsRouteImport.update({
   id: '/events',
   path: '/events',
@@ -120,11 +114,6 @@ const AuthenticatedMarketplaceRoute =
 const AuthenticatedMembersRoute = AuthenticatedMembersRouteImport.update({
   id: '/members',
   path: '/members',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMessagesRoute = AuthenticatedMessagesRouteImport.update({
-  id: '/messages',
-  path: '/messages',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedNotificationsRoute =
@@ -171,17 +160,29 @@ const AuthenticatedCommunitiesSlugRoute =
     path: '/communities/$slug',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDiscussionsIndexRoute =
+  AuthenticatedDiscussionsIndexRouteImport.update({
+    id: '/discussions/',
+    path: '/discussions/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDiscussionsIdRoute =
   AuthenticatedDiscussionsIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedDiscussionsRoute,
+    id: '/discussions/$id',
+    path: '/discussions/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMessagesIndexRoute =
+  AuthenticatedMessagesIndexRouteImport.update({
+    id: '/messages/',
+    path: '/messages/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedMessagesUserIdRoute =
   AuthenticatedMessagesUserIdRouteImport.update({
-    id: '/$userId',
-    path: '/$userId',
-    getParentRoute: () => AuthenticatedMessagesRoute,
+    id: '/messages/$userId',
+    path: '/messages/$userId',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const ApiPublicTelegramNotifyRoute = ApiPublicTelegramNotifyRouteImport.update({
   id: '/api/public/telegram/notify',
@@ -206,12 +207,10 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/discussions': typeof AuthenticatedDiscussionsRouteWithChildren
   '/events': typeof AuthenticatedEventsRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/marketplace': typeof AuthenticatedMarketplaceRoute
   '/members': typeof AuthenticatedMembersRoute
-  '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/resources': typeof AuthenticatedResourcesRoute
@@ -222,6 +221,8 @@ export interface FileRoutesByFullPath {
   '/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/communities/': typeof AuthenticatedCommunitiesIndexRoute
+  '/discussions/': typeof AuthenticatedDiscussionsIndexRoute
+  '/messages/': typeof AuthenticatedMessagesIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
 }
@@ -236,12 +237,10 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/discussions': typeof AuthenticatedDiscussionsRouteWithChildren
   '/events': typeof AuthenticatedEventsRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/marketplace': typeof AuthenticatedMarketplaceRoute
   '/members': typeof AuthenticatedMembersRoute
-  '/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/resources': typeof AuthenticatedResourcesRoute
@@ -252,6 +251,8 @@ export interface FileRoutesByTo {
   '/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
   '/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/communities': typeof AuthenticatedCommunitiesIndexRoute
+  '/discussions': typeof AuthenticatedDiscussionsIndexRoute
+  '/messages': typeof AuthenticatedMessagesIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
 }
@@ -268,12 +269,10 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/discussions': typeof AuthenticatedDiscussionsRouteWithChildren
   '/_authenticated/events': typeof AuthenticatedEventsRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/marketplace': typeof AuthenticatedMarketplaceRoute
   '/_authenticated/members': typeof AuthenticatedMembersRoute
-  '/_authenticated/messages': typeof AuthenticatedMessagesRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/resources': typeof AuthenticatedResourcesRoute
@@ -284,6 +283,8 @@ export interface FileRoutesById {
   '/_authenticated/discussions/$id': typeof AuthenticatedDiscussionsIdRoute
   '/_authenticated/messages/$userId': typeof AuthenticatedMessagesUserIdRoute
   '/_authenticated/communities/': typeof AuthenticatedCommunitiesIndexRoute
+  '/_authenticated/discussions/': typeof AuthenticatedDiscussionsIndexRoute
+  '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
   '/api/public/telegram/notify': typeof ApiPublicTelegramNotifyRoute
   '/api/public/telegram/webhook': typeof ApiPublicTelegramWebhookRoute
 }
@@ -300,12 +301,10 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
-    | '/discussions'
     | '/events'
     | '/feed'
     | '/marketplace'
     | '/members'
-    | '/messages'
     | '/notifications'
     | '/profile'
     | '/resources'
@@ -316,6 +315,8 @@ export interface FileRouteTypes {
     | '/discussions/$id'
     | '/messages/$userId'
     | '/communities/'
+    | '/discussions/'
+    | '/messages/'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -330,12 +331,10 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
-    | '/discussions'
     | '/events'
     | '/feed'
     | '/marketplace'
     | '/members'
-    | '/messages'
     | '/notifications'
     | '/profile'
     | '/resources'
@@ -346,6 +345,8 @@ export interface FileRouteTypes {
     | '/discussions/$id'
     | '/messages/$userId'
     | '/communities'
+    | '/discussions'
+    | '/messages'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
   id:
@@ -361,12 +362,10 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
-    | '/_authenticated/discussions'
     | '/_authenticated/events'
     | '/_authenticated/feed'
     | '/_authenticated/marketplace'
     | '/_authenticated/members'
-    | '/_authenticated/messages'
     | '/_authenticated/notifications'
     | '/_authenticated/profile'
     | '/_authenticated/resources'
@@ -377,6 +376,8 @@ export interface FileRouteTypes {
     | '/_authenticated/discussions/$id'
     | '/_authenticated/messages/$userId'
     | '/_authenticated/communities/'
+    | '/_authenticated/discussions/'
+    | '/_authenticated/messages/'
     | '/api/public/telegram/notify'
     | '/api/public/telegram/webhook'
   fileRoutesById: FileRoutesById
@@ -476,13 +477,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/discussions': {
-      id: '/_authenticated/discussions'
-      path: '/discussions'
-      fullPath: '/discussions'
-      preLoaderRoute: typeof AuthenticatedDiscussionsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/events': {
       id: '/_authenticated/events'
       path: '/events'
@@ -509,13 +503,6 @@ declare module '@tanstack/react-router' {
       path: '/members'
       fullPath: '/members'
       preLoaderRoute: typeof AuthenticatedMembersRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/messages': {
-      id: '/_authenticated/messages'
-      path: '/messages'
-      fullPath: '/messages'
-      preLoaderRoute: typeof AuthenticatedMessagesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/notifications': {
@@ -574,19 +561,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCommunitiesSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/discussions/': {
+      id: '/_authenticated/discussions/'
+      path: '/discussions'
+      fullPath: '/discussions/'
+      preLoaderRoute: typeof AuthenticatedDiscussionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/discussions/$id': {
       id: '/_authenticated/discussions/$id'
-      path: '/$id'
+      path: '/discussions/$id'
       fullPath: '/discussions/$id'
       preLoaderRoute: typeof AuthenticatedDiscussionsIdRouteImport
-      parentRoute: typeof AuthenticatedDiscussionsRoute
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages/': {
+      id: '/_authenticated/messages/'
+      path: '/messages'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/messages/$userId': {
       id: '/_authenticated/messages/$userId'
-      path: '/$userId'
+      path: '/messages/$userId'
       fullPath: '/messages/$userId'
       preLoaderRoute: typeof AuthenticatedMessagesUserIdRouteImport
-      parentRoute: typeof AuthenticatedMessagesRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/telegram/notify': {
       id: '/api/public/telegram/notify'
@@ -605,65 +606,42 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedDiscussionsRouteChildren {
-  AuthenticatedDiscussionsIdRoute: typeof AuthenticatedDiscussionsIdRoute
-}
-
-const AuthenticatedDiscussionsRouteChildren: AuthenticatedDiscussionsRouteChildren =
-  {
-    AuthenticatedDiscussionsIdRoute: AuthenticatedDiscussionsIdRoute,
-  }
-
-const AuthenticatedDiscussionsRouteWithChildren =
-  AuthenticatedDiscussionsRoute._addFileChildren(
-    AuthenticatedDiscussionsRouteChildren,
-  )
-
-interface AuthenticatedMessagesRouteChildren {
-  AuthenticatedMessagesUserIdRoute: typeof AuthenticatedMessagesUserIdRoute
-}
-
-const AuthenticatedMessagesRouteChildren: AuthenticatedMessagesRouteChildren = {
-  AuthenticatedMessagesUserIdRoute: AuthenticatedMessagesUserIdRoute,
-}
-
-const AuthenticatedMessagesRouteWithChildren =
-  AuthenticatedMessagesRoute._addFileChildren(
-    AuthenticatedMessagesRouteChildren,
-  )
-
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedDiscussionsRoute: typeof AuthenticatedDiscussionsRouteWithChildren
   AuthenticatedEventsRoute: typeof AuthenticatedEventsRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedMarketplaceRoute: typeof AuthenticatedMarketplaceRoute
   AuthenticatedMembersRoute: typeof AuthenticatedMembersRoute
-  AuthenticatedMessagesRoute: typeof AuthenticatedMessagesRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedResourcesRoute: typeof AuthenticatedResourcesRoute
   AuthenticatedShowcaseRoute: typeof AuthenticatedShowcaseRoute
   AuthenticatedCommunitiesSlugRoute: typeof AuthenticatedCommunitiesSlugRoute
+  AuthenticatedDiscussionsIdRoute: typeof AuthenticatedDiscussionsIdRoute
+  AuthenticatedMessagesUserIdRoute: typeof AuthenticatedMessagesUserIdRoute
   AuthenticatedCommunitiesIndexRoute: typeof AuthenticatedCommunitiesIndexRoute
+  AuthenticatedDiscussionsIndexRoute: typeof AuthenticatedDiscussionsIndexRoute
+  AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedDiscussionsRoute: AuthenticatedDiscussionsRouteWithChildren,
   AuthenticatedEventsRoute: AuthenticatedEventsRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedMarketplaceRoute: AuthenticatedMarketplaceRoute,
   AuthenticatedMembersRoute: AuthenticatedMembersRoute,
-  AuthenticatedMessagesRoute: AuthenticatedMessagesRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedResourcesRoute: AuthenticatedResourcesRoute,
   AuthenticatedShowcaseRoute: AuthenticatedShowcaseRoute,
   AuthenticatedCommunitiesSlugRoute: AuthenticatedCommunitiesSlugRoute,
+  AuthenticatedDiscussionsIdRoute: AuthenticatedDiscussionsIdRoute,
+  AuthenticatedMessagesUserIdRoute: AuthenticatedMessagesUserIdRoute,
   AuthenticatedCommunitiesIndexRoute: AuthenticatedCommunitiesIndexRoute,
+  AuthenticatedDiscussionsIndexRoute: AuthenticatedDiscussionsIndexRoute,
+  AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
