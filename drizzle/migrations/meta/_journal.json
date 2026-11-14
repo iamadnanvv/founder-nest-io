@@ -8,6 +8,20 @@
       "when": 1794688927915,
       "tag": "0000_restrict_community_reads_to_premium_members",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794689197218,
+      "tag": "0001_gate_remaining_shared_content_reads",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794689523156,
+      "tag": "0002_enforce_premium_access_on_content_actions",
+      "breakpoints": true
     }
   ]
 }

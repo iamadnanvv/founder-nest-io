@@ -91,6 +91,22 @@ async function handleMessage(msg: TgMessage) {
     );
   }
 
+  const premiumCommands = new Set([
+    "/post",
+    "/reply",
+    "/feed",
+    "/discussions",
+    "/events",
+    "/resources",
+    "/founders",
+  ]);
+  if (premiumCommands.has(cmd) && !(await hasPremiumAccess(sb, link.user_id))) {
+    return sendMessage(
+      chatId,
+      `🔒 This FounderHunt feature is for premium members. View membership at <a href="${PUBLIC_ORIGIN}/pricing">the pricing page</a>.`,
+    );
+  }
+
   switch (cmd) {
     case "/whoami":
       return handleWhoAmI(sb, chatId, link.user_id);
@@ -117,6 +133,19 @@ async function handleMessage(msg: TgMessage) {
     default:
       return sendMessage(chatId, "🤔 Unknown command. Type /help.");
   }
+}
+
+async function hasPremiumAccess(sb: any, userId: string) {
+  const [{ data: profile }, { data: adminRole }] = await Promise.all([
+    sb.from("profiles").select("is_paid").eq("id", userId).maybeSingle(),
+    sb
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle(),
+  ]);
+  return !!profile?.is_paid || !!adminRole;
 }
 
 function helpText(linked: boolean) {
