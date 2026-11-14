@@ -22,6 +22,13 @@
       "when": 1794689523156,
       "tag": "0002_enforce_premium_access_on_content_actions",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794689726242,
+      "tag": "0003_gate_startup_upvotes_for_premium_members",
+      "breakpoints": true
     }
   ]
 }

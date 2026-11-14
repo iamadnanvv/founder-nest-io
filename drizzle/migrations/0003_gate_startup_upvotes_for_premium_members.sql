@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "users upvote" ON public.startup_upvotes;
+CREATE POLICY "users upvote" ON public.startup_upvotes FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id AND public.has_premium_access(auth.uid()));
